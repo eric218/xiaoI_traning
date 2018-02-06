@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="eastrobot.robotdev.ticketsystem.dao.MigrantUnmarriedInfoMapper" >
+  
+<select id="getMaritalUnmarriedDetail" resultType="java.util.Map" parameterType="java.util.Map" >
+SELECT
+	ui.id AS uId,
+	ui.application_name AS applicationName,
+	noti.propose_marital_status AS maritalStatusCode,
+	dd.dd_martia_status AS martiaStatus,
+	ui.application_id AS applicationId,
+	CONCAT(SUBSTR(ui.application_id,7,4),'-',SUBSTR(ui.application_id,11,2),'-',SUBSTR(ui.application_id,13,2)) AS birthday,
+	ui.expiry_date AS idCardExpiryDate,
+	CONCAT(areaRegPro.reg_provice_area,areaRegCity.reg_city_area,areaRegArea.reg_area_area,areaRegComm.reg_comm_area,ui.registered_address) AS regAddr,
+  CONCAT(areaDomPro.dom_provice_area,areaDomCity.dom_city_area,areaDomArea.dom_Area_area,areaDomComm.dom_comm_area,ui.domicile_address) AS domAddr,
+	noti.formNo AS notifyFormId,
+	noti.approval_result AS approvalResult,
+	noti.approval_person AS approvalPerson,
+	noti.approval_status AS approvalStatus,
+	noti.approval_time AS approvalTime,
+	noti.proposer_name AS proposerName,
+	noti.create_time AS proposerTime
+FROM
+	migrant_unmarried_info ui
+LEFT JOIN (
+	SELECT a.ID AS aId,a.AREA_NAME AS reg_provice_area FROM area a
+) areaRegPro ON areaRegPro.aId=ui.registered_province
+LEFT JOIN (
+	SELECT a.ID AS aId,a.AREA_NAME AS reg_city_area FROM area a
+) areaRegCity ON areaRegCity.aId=ui.registered_city
+LEFT JOIN (
+	SELECT a.ID AS aId,a.AREA_NAME AS reg_area_area FROM area a
+) areaRegArea ON areaRegArea.aId=ui.registered_area
+LEFT JOIN (
+	SELECT a.ID AS aId,a.AREA_NAME AS reg_comm_area FROM area a
+) areaRegComm ON areaRegComm.aId=ui.Registered_community
+LEFT JOIN (
+	SELECT a.ID AS aId,a.AREA_NAME AS dom_provice_area FROM area a
+) areaDomPro ON areaDomPro.aId=ui.domicile_province
+LEFT JOIN (
+	SELECT a.ID AS aId,a.AREA_NAME AS dom_city_area FROM area a
+) areaDomCity ON areaDomCity.aId=ui.domicile_city
+LEFT JOIN (
+	SELECT a.ID AS aId,a.AREA_NAME AS dom_Area_area FROM area a
+) areaDomArea ON areaDomArea.aId=ui.domicile_area
+LEFT JOIN (
+	SELECT a.ID AS aId,a.AREA_NAME AS dom_comm_area FROM area a
+) areaDomComm ON areaDomComm.aId=ui.domicile_community
+LEFT JOIN (
+	SELECT n.form_no AS formNo,
+				 n.approval_status,
+				 n.approval_result,
+				 n.approval_person,
+				 n.approval_time,
+				 n.create_time,
+				 n.proposer_name,
+				 n.propose_marital_status
+	FROM notify n
+) noti ON noti.formNo=ui.notify_form_id
+LEFT JOIN (
+	SELECT d.id AS dId,d.dic_name AS dd_martia_status FROM data_dictionary d
+) dd ON dd.dId=noti.propose_marital_status
+WHERE ui.notify_form_id=#{notifyFormId,jdbcType=VARCHAR}
+  </select>
+</mapper>

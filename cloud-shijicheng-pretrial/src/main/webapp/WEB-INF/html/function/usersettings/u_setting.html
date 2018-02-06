@@ -1,0 +1,138 @@
+<!DOCTYPE html >
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	</head>
+	<body>		
+		<div class="row">
+			<ol class="breadcrumb col-xs-12 col-md-12 col-lg-12">
+  				<li><a href="main">主页</a></li>
+  				<li><a href="#">用户设置</a></li>
+  				<li class="active">修改密码</li>
+			</ol>
+		</div>
+<!-- 		<div class="row">
+			<div class="col-lg-12">
+				<ul class="nav nav-pills">
+  					<li role="presentation"><a href="#">修改密码</a></li>
+  					<li role="presentation"><a href="#">添加用户</a></li>
+  					<li role="presentation"><a href="#">删除用户</a></li>
+					<li role="presentation"><a href="#">登录记录</a></li>
+				</ul>	
+			</div>
+		</div> -->
+		<div class="row" style="margin-top: 40px;">
+			<div class="col-sm-6 col-sm-offset-3 form-box">
+				<!-- 修改密码div -->
+				<div class="login-panel panel panel-warning">
+					<div class="panel-heading"><strong>修改密码</strong></div>
+					
+					<div class="panel-body">
+					<form role="form">
+						<fieldset>
+							<div class="form-group">
+								<label for="exampleInputEmail1">原密码</label>
+								<input class="form-control" placeholder="" id="old_password" type="password" autofocus="">
+							</div>
+							<div class="form-group">
+								<label for="exampleInputEmail1">新密码</label>
+								<input class="form-control" placeholder="" id="new_password" type="password" value="">
+							</div>
+							<div class="form-group">
+								<label for="exampleInputEmail1">确认密码</label>
+								<input class="form-control" placeholder="" id="verify_password" type="password" value="">
+							</div>
+							<a href="#" class="btn btn-warning" id="modifyBtn">修改</a>
+						</fieldset>
+					</form>
+				</div>
+				<!-- 警告栏 -->
+				<div class="alert alert-danger" role="alert" id="errorSpan"><ul id="errorMsg"></ul></div><!-- end of alert-danger -->
+				</div><!-- end of login-panel-->
+			
+			</div>
+		</div>
+	<script type="text/javascript">
+	$(document).ready(function(){
+		$('#errorSpan').hide();
+	    //提交绑定，click和回车事件触发
+	    $('#modifyBtn').click(function(){
+	    	logincheck();
+	    });
+	    document.onkeydown = function(e){
+	    	if(!e){e = window.event;}
+	    	if((e.keyCode || e.which) == 13){logincheck();}
+	    }
+	});
+	//登录信息检查
+	function logincheck(){
+		var old_password = $('#old_password').val();
+		var new_password = $('#new_password').val();
+		var verify_password = $('#verify_password').val();
+		//每次点击的时候独立验证，去除之前的错误信息
+		$("#errorMsg").empty();
+		$("#errorSpan").hide();
+		
+		//先验证非空
+		if(old_password == null || old_password.length == 0 
+				|| new_password == null || old_password.length == 0
+				|| verify_password == null || verify_password.length == 0){
+			//有错显示错误面板
+			$("#errorSpan").show();
+			//原密码为空
+			if(old_password == null || old_password.length == 0)
+				$("#errorMsg").append("<li>原密码不能为空</li>");
+			
+			//新密码为空
+			if(new_password == null || new_password.length == 0)
+				$("#errorMsg").append("<li>新密码不能为空</li>");
+			
+			//确认密码不能为空
+			if(verify_password == null || verify_password.length == 0)
+				$("#errorMsg").append("<li>确认密码不能为空</li>");
+			
+			//有任何为空则直接return，不跑下面的程序了
+			return;
+		}
+		
+		//再验证有效性
+		if(old_password.length <= 4 || new_password.length <= 4 || verify_password.length <= 4 || new_password != verify_password){
+			//有错显示错误面板
+			$("#errorSpan").show();
+			
+			//原密码不能小于5位	
+			if(old_password.length <= 4 || new_password.length <= 4 || verify_password.length <= 4)
+				$("#errorMsg").append("<li>密码长度不能小于5位</li>");
+			
+			//新密码和老密码要相同
+			if(new_password != verify_password)
+				$("#errorMsg").append("<li>两次输入的新密码不一致</li>");
+			
+			//有任何为空则直接return，不跑下面的程序了
+			return;
+		}
+		
+		//通过验证的话ajax与后端交互
+		//alert("通过前端验证");
+		$.ajax({
+			method:'POST',
+			url:'changePassword.api',
+			data:{
+				old_password : old_password,
+				new_password : new_password,
+				verify_password : verify_password
+			},
+			success:function(response){
+				var responseObj = JSON.parse(response);
+				if(responseObj.type != null || responseObj.type != undefined){
+					alert(responseObj.info);
+					$('#old_password').val("");
+					$('#new_password').val("");
+					$('#verify_password').val("");
+				}
+			}
+		});
+	}
+	</script>
+	</body>
+</html>

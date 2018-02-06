@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="eastrobot.robotdev.ticketsystem.dao.JobPersonMapper">
+
+  <select id="getAllPersonJob" parameterType="java.util.Map" resultType="java.util.Map">
+SELECT
+	jp.id AS jId,
+	jp.`name` AS personName,
+	jp.tel AS personTel,
+	eduDic.dic_education AS personDegree,
+	jp.position AS personPosition,
+	jp.create_date AS createDate
+FROM
+	job_person jp
+LEFT JOIN (
+	SELECT dd.id AS dId,dd.dic_name AS dic_education FROM data_dictionary dd
+) eduDic ON eduDic.dId=jp.education
+ORDER BY jp.create_date DESC
+  </select>
+  
+<select id="getPersonDetailById" parameterType="java.lang.Integer" resultType="java.util.Map">
+SELECT
+	DATE_FORMAT(jps.create_date,'%Y年%m月%d日') AS createDate,
+	DATE_FORMAT(jps.expire_date,'%Y年%m月%d日') AS expireDate,
+	jps.job_no AS jobNo,
+	jps.`name` AS jName,
+	sexDic.dic_sex AS sex,
+	nationDic.nation_name AS nation,
+	eduDic.dic_edu AS education,
+	jps.age AS age,
+	jps.height AS height,
+	jps.id_card AS idCard,
+	healCondDic.dic_health_condi AS healthCond,
+	regNatureDic.dic_reg_nature AS regNature,
+	marryStatusDic.dic_marry_status AS marryStatus,
+	certifDic.dic_certif AS isCertificate,
+	jps.tel AS tel,
+	cateDic.dic_category AS category,
+	jps.university AS university,
+	jps.major AS major,
+	jps.graduate_date AS graduateDate,
+	jps.profession_type AS profType,
+	profLvlDic.dic_prof_lvl AS profLvl,
+	profTimeDic.dic_prof_time AS profTime,
+	jps.position AS position,
+	salaryDic.dic_salary AS salary,
+	CONCAT(regProArea.reg_province_area,regCityArea.reg_city_area,regAreaArea.reg_area_area,regCommArea.reg_comm_area,jps.register_address) AS regAddr,
+	CONCAT(domProArea.dom_province_area,domCityArea.dom_city_area,domAreaArea.dom_area_area,domCommArea.dom_comm_area,jps.domicile_address) AS domAddr,		
+	jps.work_experience AS workExper
+FROM
+	job_person jps
+LEFT JOIN (
+	SELECT dd.id AS dId,dd.dic_name AS dic_sex FROM data_dictionary dd
+) sexDic ON sexDic.dId=jps.sex
+LEFT JOIN (
+	SELECT dd.id AS dId,dd.dic_name AS dic_edu FROM data_dictionary dd
+) eduDic ON eduDic.dId=jps.education
+LEFT JOIN (
+	SELECT n.mz_code AS nId,n.mz_name AS nation_name FROM nation n
+) nationDic ON nationDic.nId=jps.nation
+LEFT JOIN (
+	SELECT dd.id AS dId,dd.dic_name AS dic_health_condi FROM data_dictionary dd
+) healCondDic ON healCondDic.dId=jps.health_condition
+LEFT JOIN (
+	SELECT dd.id AS dId,dd.dic_name AS dic_reg_nature FROM data_dictionary dd
+) regNatureDic ON regNatureDic.dId=jps.register_nature
+LEFT JOIN (
+	SELECT dd.id AS dId,dd.dic_name AS dic_marry_status FROM data_dictionary dd
+) marryStatusDic ON marryStatusDic.dId=jps.marry_status
+LEFT JOIN (
+	SELECT dd.id AS dId,dd.dic_name AS dic_certif FROM data_dictionary dd
+) certifDic ON certifDic.dId=jps.is_certificate
+LEFT JOIN (
+	SELECT dd.id AS dId,dd.dic_name AS dic_category FROM data_dictionary dd
+) cateDic ON cateDic.dId=jps.category
+LEFT JOIN (
+	SELECT a.ID AS aId, a.AREA_NAME AS reg_province_area FROM area a
+)regProArea ON regProArea.aId=jps.register_province
+LEFT JOIN (
+	SELECT a.ID AS aId, a.AREA_NAME AS reg_city_area FROM area a
+)regCityArea ON regCityArea.aId=jps.register_city
+LEFT JOIN (
+	SELECT a.ID AS aId, a.AREA_NAME AS reg_area_area FROM area a
+)regAreaArea ON regAreaArea.aId=jps.register_area
+LEFT JOIN (
+	SELECT a.ID AS aId, a.AREA_NAME AS reg_comm_area FROM area a
+)regCommArea ON regCommArea.aId=jps.register_community
+LEFT JOIN (
+	SELECT a.ID AS aId, a.AREA_NAME AS dom_province_area FROM area a
+)domProArea ON domProArea.aId=jps.domicile_province
+LEFT JOIN (
+	SELECT a.ID AS aId, a.AREA_NAME AS dom_city_area FROM area a
+)domCityArea ON domCityArea.aId=jps.domicile_city
+LEFT JOIN (
+	SELECT a.ID AS aId, a.AREA_NAME AS dom_area_area FROM area a
+)domAreaArea ON domAreaArea.aId=jps.domicile_area
+LEFT JOIN (
+	SELECT a.ID AS aId, a.AREA_NAME AS dom_comm_area FROM area a
+)domCommArea ON domCommArea.aId=jps.domicile_community
+LEFT JOIN (
+	SELECT dd.id AS dId,dd.dic_name AS dic_prof_lvl FROM data_dictionary dd
+) profLvlDic ON profLvlDic.dId=jps.profession_lvl
+LEFT JOIN (
+	SELECT dd.id AS dId,dd.dic_name AS dic_prof_time FROM data_dictionary dd
+) profTimeDic ON profTimeDic.dId=jps.profession_time
+LEFT JOIN (
+	SELECT dd.id AS dId,dd.dic_name AS dic_salary FROM data_dictionary dd
+) salaryDic ON salaryDic.dId=jps.salary
+WHERE 1=1
+AND jps.id= #{jobId,jdbcType=INTEGER}
+  </select>
+
+</mapper>

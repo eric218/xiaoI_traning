@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<link href="resource/assets/jquery-ztree/metroStyle.css" rel="stylesheet">
+	</head>  
+  	<body>
+		<div class="row">
+			<ol class="breadcrumb col-xs-12 col-md-12 col-lg-12">
+  				<li><a href="main">主页</a></li>
+  				<li><a href="#">权限管理</a></li>
+  				<li class="active">用户角色绑定</li>
+			</ol>
+		</div>
+		
+		<div class="row" style="margin-top: 40px;">
+			<div class="col-sm-8 col-sm-offset-2 form-box">
+				<div class="login-panel panel panel-warning">
+					<div class="panel-heading"><strong>用户角色绑定</strong></div>					
+					<div class="panel-body">
+						<!-- 用户表 -->
+						<div class="bootstrap-table">
+							<div class="fixed-table-container">
+								<div class="fixed-table-header">
+									<table></table>
+								</div>
+								<div class="fixed-table-body">
+									<table class="table table-hover">
+										<thead>
+											<tr>
+												<th>用户名</th>
+												<th>角色</th>
+												<th>角色描述</th>
+												<th>操作</th>
+											</tr>
+										</thead>
+										<tbody id="allUserAndRoleTable">
+											<!-- 表数据体 -->											
+										</tbody>
+									</table>
+								</div>
+								<div class="fixed-table-pagination">
+								</div>
+							</div>							
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- 修改用户角色绑定模态窗 -->
+		<!-- model -->
+		<div class="modal fade" id="changeUserRole" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+		  	<div class="modal-dialog">
+		    	<div class="modal-content">
+		      		<div class="modal-header">
+		        		<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">取消</span></button>
+		        		<h4 class="modal-title">修改用户角色</h4>
+		      		</div>
+		      		<div class="modal-body">
+		      			<p>选择下列角色中的一个并保存，将可以让改用户获得该角色代表的权限!</p>
+						<!-- 显示功能树 -->
+						<div class="row">
+							<div class="col-md-6" id="allRolesList">
+							<!-- 角色列表 -->	
+							</div>
+							<div class="col-md-6">
+								<div id="roleFnTree" class="ztree">
+								<!-- 对应功能树展示区 -->
+								
+								</div>								
+							</div>
+						</div>
+
+		      		</div>
+		      		<div class="modal-footer">
+		        		<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+		        		<button type="button" class="btn btn-primary" id="changeUserRoleBtn">保存</button>
+		      		</div>
+		    	</div><!-- /.modal-content -->
+		  	</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+		
+		<script src="resource/assets/jquery-ztree/jquery.ztree.all.min.js"></script>
+		
+		<!-- document ready的时候加载表 -->
+		<script type="text/javascript">
+		$(document).ready(function(){
+			$.ajax({
+				type:'POST',
+				url:'main/getAllUserAndRole.api',
+				success:function(data){
+					var params = JSON.parse(data);
+					for(var i = 0 ; i < params.length ; i++ ){
+						$('#allUserAndRoleTable').append('<tr id="'+params[i].userId+'"></tr>');
+						$('#allUserAndRoleTable tr:last-child').append('<td>'+params[i].username+'</td>')
+						.append('<td>'+params[i].roleName+'</td>')
+						.append('<td>'+params[i].roleDesc+'</td>')
+						.append('<td><a href="javascript:void(0);">修改该用户角色</a></td>');
+						
+						$('#allUserAndRoleTable tr:last-child a').data('userId',params[i].userId);
+						$('#'+params[i].userId+' a').on('click',function(){
+							$('#changeUserRole').data('userId',$(this).data('userId'));
+							//远程获取所有的角色，角色对应的树(不可修改)显示在模态窗上
+							$.ajax({
+								type:'POST',
+								url:'main/perm_getAllRoles.api',
+								success:function(data){
+									var params = JSON.parse(data);
+									$('#allRolesList').empty();
+									for(var i = 0 ; i < params.length ; i++){
+										$('#allRolesList').append('<div class="radio"><label><input type="radio" name="optionsRadios" id="'+params[i].id+'" value="">'+params[i].name+'</label></div>')
+										$('#'+params[i].id).on('change',function(){
+											var roleId = $(this).attr('id');
+											//加载对应的功能树
+											//加载前先清空父容器
+											$('#roleFnTree').empty();
+											$.ajax({
+												type:'POST',
+												url:'main/getAllFnTree.api',
+												data:{
+													roleId : roleId
+												},
+												success:function(data){
+													var zNodes = JSON.parse(data);
+													zNodes[0].chkDisabled = true;
+													var zTreeObj;
+													var setting = {
+															data:{
+																simpleData:{
+																	enable:true,
+																	idKey:"id",
+																	pIdKey:"pid",
+																	rootPId:0
+																}									
+															},
+															check:{
+																enable : true,
+																chkDisabledInherit: true,
+																chkStyle: "checkbox",
+																chkboxType: { "Y": "ps", "N": "ps" },
+																nocheck:false
+															}
+														};
+													zTreeObj = $.fn.zTree.init($("#roleFnTree"), setting, zNodes);
+													zTreeObj.expandAll(true);
+												},
+												error:function(){
+													$('#roleFnTree').append('加载角色功能树失败，请检查网络连接');
+												}
+											})
+										});
+									}
+								},
+							})
+							$('#changeUserRole').modal('show');
+						});
+					}
+				},
+				error:function(){
+					alert('与服务器失去联系，请检查您的网络连接！');
+				}
+			})
+		});
+		//编写提交用户角色绑定
+		$('#changeUserRoleBtn').click(function(){
+			var checkedRoleId = $("#allRolesList input[type='radio']:checked").attr('id');
+			var userId = $('#changeUserRole').data('userId');
+			$('#changeUserRole').modal('hide');
+			$.ajax({
+				type:'POST',
+				url:'main/submitUserRoleBind.api',
+				data:{
+					checkedRoleId : checkedRoleId,
+					userId : userId
+				},
+				success:function(data){
+					var json = JSON.parse(data);
+					if(json.type == 'success'){
+						alert('修改用户角色成功！');
+						$('#mainPan').empty().load('main/perm_roleUserBind.api');
+					}else{
+						alert('修改用户角色失败！');
+					}
+				},
+				error:function(){
+					alert('修改用户角色失败，与服务器断开连接，请检查网络连接！');
+				}
+			});
+		});
+		</script>
+  </body>
+</html>

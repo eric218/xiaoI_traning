@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="eastrobot.robotdev.ticketsystem.dao.Log_User_OperateDao">
+	<insert id="insert" parameterType="Log_User_Operate" keyProperty="id">
+		insert into log_user_operate 
+			(id,user_id,operate_time,operate_id,tk_id) 
+		values 
+			(#{id},#{user_id},#{operate_time},#{operate_id},#{tk_id})
+	</insert>
+	
+	<delete id="delete" parameterType="String">
+		delete from log_user_operate where id=#{id}
+	</delete>
+	
+	<update id="update" parameterType="Log_User_Operate">
+		update log_user_operate set user_id=#{user_id},operate_time=#{operate_time},operate_id=#{operate_id},tk_id=#{tk_id} where id=#{id}
+	</update>
+	
+	<select id="select" parameterType="String" resultType="Log_User_Operate">
+		select * from log_user_operate where id=#{id}
+	</select>
+</mapper>

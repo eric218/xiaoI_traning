@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="eastrobot.robotdev.ticketsystem.dao.Tk_Pic_UrlDao">
+	<insert id="insert" parameterType="Tk_Pic_Url" keyProperty="id">
+		insert into tk_pic_url 
+			(pic_id,tk_id,pic_url,pic_url_zip) 
+		values 
+			(#{pic_id},#{tk_id},#{pic_url},#{pic_url_zip})
+	</insert>
+	
+	<delete id="delete" parameterType="String">
+		delete from tk_pic_url where pic_id=#{pic_id}
+	</delete>
+	
+	<update id="update" parameterType="Tk_Pic_Url">
+		update tk_pic_url set tk_id=#{tk_id},pic_url=#{pic_url},pic_url_zip=#{pic_url_zip} where pic_id=#{pic_id}
+	</update>
+	
+	<select id="select" parameterType="String" resultType="Tk_Pic_Url">
+		select * from tk_pic_url where pic_id=#{pic_id}
+	</select>
+</mapper>

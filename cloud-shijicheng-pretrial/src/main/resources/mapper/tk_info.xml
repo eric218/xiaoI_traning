@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="eastrobot.robotdev.ticketsystem.dao.Tk_InfoDao">
+	<insert id="insert" parameterType="Tk_Info" keyProperty="id">
+		insert into tk_info 
+			(tk_id,tk_name,tk_tel,tk_content,tk_status,tk_date,tk_time,tk_fn_id) 
+		values 
+			(#{tk_id},#{tk_name},#{tk_tel},#{tk_content},#{tk_status},#{tk_date},#{tk_time},#{tk_fn_id})
+	</insert>
+	
+	<delete id="delete" parameterType="String">
+		delete from tk_info where tk_id=#{tk_id}
+	</delete>
+	
+	<update id="update" parameterType="Tk_Info">
+		update tk_info set tk_name=#{tk_name},tk_tel=#{tk_tel},tk_content=#{tk_content},tk_status=#{tk_status},tk_date=#{tk_date},tk_time=#{tk_time},tk_fn_id=#{tk_fn_id} where tk_id=#{tk_id}
+	</update>
+	
+	<select id="select" parameterType="String" resultType="Tk_Info">
+		select * from tk_info where tk_id=#{tk_id}
+	</select>
+	
+	<select id="selectApplyByFnId" resultType="Tk_Info">
+		select * from tk_info where
+		<foreach item="item" collection="list" open="" close="" separator="OR">
+			tk_fn_id=#{item}
+		</foreach>		
+	</select>
+	
+	<select id="selectCountByStatus" resultType="java.lang.Integer">
+		select count(*) from tk_info
+		<where>
+			<if test="tk_status != null">tk_status = #{tk_status}</if>
+			<if test="tk_date != null">and tk_date = #{tk_date}</if>
+		</where>
+	</select>
+	
+	<select id="selectDistinctTel" resultType="java.lang.Integer">
+		select count(distinct tk_tel) from tk_info;
+	</select>
+</mapper>

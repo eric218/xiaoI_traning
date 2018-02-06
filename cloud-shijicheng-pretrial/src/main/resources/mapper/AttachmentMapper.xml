@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="eastrobot.robotdev.ticketsystem.dao.AttachmentMapper" >
+  
+  	<resultMap id="BaseResultMap" type="eastrobot.robotdev.ticketsystem.model.Attachment">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="file_name" jdbcType="VARCHAR" property="fileName" />
+		<result column="file_addr" jdbcType="VARCHAR" property="fileAddr" />
+		<result column="seq" jdbcType="INTEGER" property="seq" />
+		<result column="notify_form_id" jdbcType="VARCHAR" property="notifyFormId" />
+		<result column="mode_code" jdbcType="VARCHAR" property="modeCode" />
+		<result column="mode_id" jdbcType="INTEGER" property="modeId" />
+	</resultMap>
+  
+  <select id="getFileByFormNo" parameterType="java.util.Map" resultType="java.util.Map">
+SELECT
+	a.file_name AS fileName,
+	a.file_addr AS fileAddr,
+	a.mode_code AS modeCode,
+	a.seq AS fileSeq
+FROM
+	attachment a
+WHERE
+	a.notify_form_id = #{notifyFormId,jdbcType=VARCHAR}
+ORDER BY a.seq
+  </select>
+  
+  	<!-- 新增附件 -->
+	<insert id="saveAttachment" parameterType="eastrobot.robotdev.ticketsystem.model.Attachment" useGeneratedKeys="true" keyProperty="id">
+		insert into attachment 
+			(file_name,file_addr,seq,mode_code,mode_id) 
+		values 
+			(#{fileName},#{fileAddr},#{seq},#{modeCode},#{modeId})
+	</insert>
+  
+  	<!-- 通过modeCode和modeId查询附件 -->
+	<select id="findAttachmentsByModeIdAndModeCode" resultMap="BaseResultMap">
+		select * from attachment 
+		where mode_code = #{modeCode} and mode_id = #{modeId}
+	</select>
+	
+	<!-- 通过modeCode和modeId删除附件 -->
+	<delete id="deleteAttachmentsByModeIdAndModeCode">
+		delete from attachment 
+		where mode_code = #{modeCode} and mode_id = #{modeId}
+	</delete>
+	
+	<select id="getFileByCodeAndId" resultType="java.util.Map" parameterType="java.util.Map">
+SELECT
+	a.id AS aId,
+	a.file_name AS fileName,
+	a.file_addr AS fileAddr,
+	a.mode_code AS modeCode,
+	a.seq AS fileSeq
+FROM
+	attachment a
+WHERE
+	a.mode_code = #{modelCode}
+AND a.mode_id = #{jobId}
+ORDER BY
+	a.seq
+	</select>
+	
+	<delete id="deleteAttachmentById" parameterType="java.lang.Integer">
+		DELETE FROM attachment
+        WHERE id=#{fileId,jdbcType=INTEGER}
+	</delete>
+</mapper>

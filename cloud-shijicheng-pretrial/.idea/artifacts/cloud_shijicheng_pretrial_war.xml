@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="cloud-shijicheng-pretrial:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <root id="archive" name="cloud-shijicheng-pretrial.war">
+      <element id="artifact" artifact-name="cloud-shijicheng-pretrial:war exploded" />
+    </root>
+  </artifact>
+</component>

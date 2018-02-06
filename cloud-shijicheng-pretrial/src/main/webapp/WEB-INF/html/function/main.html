@@ -1,0 +1,427 @@
+<!DOCTYPE html >
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	</head>
+	<body>
+		<div class="row">
+			<div class="col-lg-12">
+				<h1 class="page-header">欢迎使用世纪城社区资料预审系统！</h1>
+			</div>
+		</div><!--/.row-->
+		
+		<div class="row">
+			<div class="col-xs-12 col-md-6 col-lg-3">
+				<div class="panel panel-blue panel-widget ">
+					<div class="row no-padding">
+						<div class="col-sm-3 col-lg-5 widget-left">
+							<svg class="glyph stroked bag"><use xlink:href="#stroked-bag"></use></svg>
+						</div>
+						<div class="col-sm-9 col-lg-7 widget-right">
+							<div class="large" id="apllyCount">0</div>
+							<div class="text-muted">未审工单</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-xs-12 col-md-6 col-lg-3">
+				<div class="panel panel-orange panel-widget">
+					<div class="row no-padding">
+						<div class="col-sm-3 col-lg-5 widget-left">
+							<svg class="glyph stroked empty-message"><use xlink:href="#stroked-empty-message"></use></svg>
+						</div>
+						<div class="col-sm-9 col-lg-7 widget-right">
+							<div class="large" id="todayNew">0</div>
+							<div class="text-muted">今日新增</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-xs-12 col-md-6 col-lg-3">
+				<div class="panel panel-teal panel-widget">
+					<div class="row no-padding">
+						<div class="col-sm-3 col-lg-5 widget-left">
+							<svg class="glyph stroked male-user"><use xlink:href="#stroked-male-user"></use></svg>
+						</div>
+						<div class="col-sm-9 col-lg-7 widget-right">
+							<div class="large" id="userCount">0</div>
+							<div class="text-muted">用户数量</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-xs-12 col-md-6 col-lg-3">
+				<div class="panel panel-red panel-widget">
+					<div class="row no-padding">
+						<div class="col-sm-3 col-lg-5 widget-left">
+							<svg class="glyph stroked app-window-with-content"><use xlink:href="#stroked-app-window-with-content"></use></svg>
+						</div>
+						<div class="col-sm-9 col-lg-7 widget-right">
+							<div class="large" id="allApplyCount">0</div>
+							<div class="text-muted">工单总数</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div><!--/.row-->
+		
+		<!-- <div class="row">
+			<div class="col-lg-12">
+				<div class="panel panel-default">
+					<div class="panel-heading">待审工单列表</div>
+					<div class="panel-body">
+					流动人口婚育证明预审列表
+						<div class="bootstrap-table">
+							<div class="fixed-table-container">
+								<div class="fixed-table-header">
+									<table></table>
+								</div>
+							</div>
+							<div class="fixed-table-body">
+								<table class="table table-hover">
+									<thead>
+										<tr>
+											<th>单号</th>
+											<th>申请人姓名</th>
+											<th>申请人联系电话</th>
+											<th>提交时间</th>
+											<th>状态</th>
+											<th>操作</th>
+										</tr>
+									</thead>
+									<tbody id="allApplyTable">
+										表数据结构体										
+									</tbody>
+								</table>
+							</div>./end of table
+						</div>
+					</div>
+					
+				</div>
+			</div>
+		</div>/.row -->
+		
+		<!-- content div -->
+		<div class="row" style="margin-top: 20px;">
+			<div class="col-sm-12">
+				<div class="login-panel panel panel-info">
+					<div class="panel-heading"><strong>待审工单列表</strong></div>
+					<div class="panel-body">
+						<table id="applyTable"></table>
+					</div><!-- ./end of panelbody -->
+				</div><!-- ./end of panel -->
+			</div><!-- ./end of col -->
+		</div><!-- ./end of content div -->
+		
+	</body>
+	<script type="text/javascript">
+	/*$(document).ready(function(){
+		//获取四个框的数据
+		$.ajax({
+			type:'GET',
+			url:'main/getOverviewData.api',
+			success:function(data){
+				var json = JSON.parse(data);
+				if(json != null){
+					$('#apllyCount').html(json.apllyCount);
+					$('#todayNew').html(json.todayNew);
+					$('#userCount').html(json.userCount);
+					$('#allApplyCount').html(json.allApplyCount);
+				}
+			},
+			error:function(error){
+				alert('拉取总揽数据失败，请检查您的网络连接')
+			}
+		})
+		//获取表格数据
+		$.ajax({
+			type:'POST',
+			url:'main/getAllApplyData.api',
+			success:function(data){
+				var params = JSON.parse(data);
+				for(var i = 0 ; i < params.length ; i++){
+					$('#allApplyTable').append('<tr id="'+params[i].tk_id+'"><tr>');
+					$('#'+params[i].tk_id).append('<td>'+params[i].tk_id+'</td>')
+					.append('<td>'+params[i].tk_name+'</td>')
+					.append('<td>'+params[i].tk_telNum+'</td>')
+					.append('<td>'+params[i].tk_datetime+'</td>')
+					.append('<td>'+params[i].status+'</td>');
+					if(params[i].status == '待审'){
+						$('#'+params[i].tk_id).append('<td><a href="javascript:void(0);">审批<a></td>');
+						$('#'+params[i].tk_id+' td a').data('param',params[i]).on('click',function(){
+							var data = $(this).data('param');
+							//先用数据生成模态窗的内容
+							//页头的姓名和联系电话
+							$('#realNameAndTelNum').empty().append('<span class="h4"><b>申请人：</b>'+data.tk_name+'&nbsp;&nbsp;&nbsp;&nbsp;</span>')
+							.append('<span class="h4"><b>联系电话：</b>'+data.tk_telNum+'</span>');
+							//缩略图的图片
+							$('#smallPicShowBox').empty();
+							for(var i = 0 ; i < data.tk_data.length ; i++){
+								$('#smallPicShowBox').append('<div id="'+data.tk_data[i].name+'">'
+																+'<div class="caption">'
+																	+'<h4>'+data.tk_data[i].label+'</h4>'
+																+'</div>'
+																+'<a href="javascript:void(0);" class="thumbnail">'
+																	+'<img src="'+data.tk_data[i].value+'" alt="'+data.tk_data[i].label+'">'
+																+'</a>'  
+															+'</div>');
+								//为缩略图a标签添加点击事件
+								$('#'+data.tk_data[i].name+' a').on('click',function(){
+									//获取点击图片并放入大图框中
+									$('#bigPicShowBox').empty().append($(this).parent().html());
+								});
+							}
+							//大窗体中的提示语
+							$('#bigPicShowBox').empty().append('<p class="h2" style="margin-top: 160px;">点击左侧小图放大</p>');
+							//通过图标可用并把单号id给两个处理按钮
+							$('#trialThroughBtn').prop({disabled:false}).data('tk_id',data.tk_id);
+							
+							$('#trialRefuseBtn').prop({disabled:false}).data('tk_id',data.tk_id);
+							//再显示模态窗
+							$('#trialInfoModal').modal('show');
+						});
+					}else{
+						$('#'+params[i].tk_id).append('<td><a href="javascript:void(0);">查看<a></td>');
+						$('#'+params[i].tk_id+' td a').data('param',params[i]).on('click',function(){
+							var data = $(this).data('param');
+							//先用数据生成模态窗的内容
+							//页头的姓名和联系电话
+							$('#realNameAndTelNum').empty().append('<span class="h4"><b>申请人：</b>'+data.tk_name+'&nbsp;&nbsp;&nbsp;&nbsp;</span>')
+							.append('<span class="h4"><b>联系电话：</b>'+data.tk_telNum+'&nbsp;&nbsp;&nbsp;&nbsp;</span>')
+							.append('<span class="h4"><b>当前状态：</b>'+data.status+'</span>');
+							//缩略图的图片
+							$('#smallPicShowBox').empty();
+							for(var i = 0 ; i < data.tk_data.length ; i++){
+								$('#smallPicShowBox').append('<div id="'+data.tk_data[i].name+'">'
+																+'<div class="caption">'
+																	+'<h4>'+data.tk_data[i].label+'</h4>'
+																+'</div>'
+																+'<a href="javascript:void(0);" class="thumbnail">'
+																	+'<img src="'+data.tk_data[i].value+'" alt="'+data.tk_data[i].label+'">'
+																+'</a>'  
+															+'</div>');
+								//为缩略图a标签添加点击事件
+								$('#'+data.tk_data[i].name+' a').on('click',function(){
+									//获取点击图片并放入大图框中
+									$('#bigPicShowBox').empty().append($(this).parent().html());
+								});
+							}
+							//大窗体中的提示语
+							$('#bigPicShowBox').empty().append('<p class="h2" style="margin-top: 160px;">点击左侧小图放大</p>');
+							//通过图标不可用
+							$('#trialThroughBtn').prop({disabled:true});
+							$('#trialRefuseBtn').prop({disabled:true});
+							//再显示模态窗
+							$('#trialInfoModal').modal('show');
+						});
+					}
+				}
+			},
+			error:function(){
+				alert('载入申请数据失败，与服务器失去联系，请检查您的网络连接');
+			}
+		});
+	});
+	//不通过按钮点击事件
+	$('#trialRefuseBtn').click(function(){
+		//隐藏modal窗体
+		$('#trialInfoModal').modal('hide');
+		//获取工单id，然后与服务器交互，结果用alert显示
+		//alert($(this).data('tk_id'));
+		$('#editReasonModal').modal('show').data('tk_id',$(this).data('tk_id'))
+		//alert('单号为：'+$(this).data('tk_id')+'的申请审核不通过，已短信通知申请人。');
+	});
+	//编辑原因的窗口如果被关闭的话不会修改tk状态，而是重新打开审核窗口
+	$('#closeEditReasonModalBtn').click(function(){
+		$('#editReasonModal').modal('hide');
+		$('#trialInfoModal').modal('show');
+	});
+	//编辑原因的窗口如果被关闭的话不会修改tk状态，而是重新打开审核窗口
+	$('#closeEditReasonModal').click(function(){
+		$('#editReasonModal').modal('hide');
+		$('#trialInfoModal').modal('show');
+	});
+	//编辑原因的窗口点击确认
+	$('#confirmEditReasonModalBtn').click(function(){
+		var text = $('#reasonTextarea').val();	
+		var tk_id = $('#editReasonModal').data('tk_id')
+
+		//关闭模态窗
+		$('#editReasonModal').modal('hide');
+		//编写提交事件
+		$.ajax({
+			type:'POST',
+			url:'main/recieveRefuseReason.api',
+			data:{
+				text:text,
+				tk_id:tk_id
+			},
+			success:function(data){
+				var json = JSON.parse(data);
+				if(json.type == 'failure'){
+					alert(json.info)
+				}else if(json.type == 'success'){
+					alert(json.info)
+					$('#mainPan').empty().load('main/getMainPage.api');
+				}
+			},
+			error:function(data){
+				alert('与服务器失去联系，请检查您的网络')
+			}
+		});
+
+	});
+	//通过按钮点击事件
+	$('#trialThroughBtn').click(function(){
+		//隐藏modal窗体
+		$('#trialInfoModal').modal('hide');
+		//获取工单id，然后与服务器交互，结果用alert显示
+		//alert($(this).data('tk_id'));
+		$.ajax({
+			type:'POST',
+			url:'main/throughPretrial.api',
+			data:{
+				tk_id:$(this).data('tk_id')
+			},
+			success:function(data){
+				var json = JSON.parse(data);
+				if(json.type == 'success'){
+					alert(json.info)
+					//刷新页面
+					$('#mainPan').empty().load('main/getMainPage.api');
+				}else if(json.type == 'failure'){
+					alert(json.info)
+				}
+			},error:function(data){
+				console.log('与服务器失去联系，请检查您的网络')
+			}
+		});
+		
+	});*/
+	</script>
+	
+	<script type="text/javascript">
+	//获取四个框的数据
+	$.ajax({
+		type:'GET',
+		url:'main/getMainOverviewInfo.api',
+		success:function(data){
+			if(data != null){
+				$('#apllyCount').html(data.apllyCount);
+				$('#todayNew').html(data.todayNew);
+				$('#userCount').html(data.userCount);
+				$('#allApplyCount').html(data.allApplyCount);
+			}
+		},
+		error:function(error){
+			alert('拉取总揽数据失败，请检查您的网络连接')
+		}
+	});
+	
+var TableInit = function () {
+    var oTableInit = new Object();
+    //初始化Table
+    oTableInit.Init = function () {
+        $('#applyTable').bootstrapTable({
+            url: 'approval/list',         //请求后台的URL（*）
+            method: 'get',                      //请求方式（*）
+            //toolbar: '#toolbar',                //工具按钮用哪个容器
+            striped: false,                      //是否显示行间隔色
+            cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+            pagination: true,                   //是否显示分页（*）
+            sortable: false,                     //是否启用排序
+            //sortOrder: "asc",                   //排序方式
+            queryParams: oTableInit.queryParams,//传递参数（*）
+            sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+            pageNumber:1,                       //初始化加载第一页，默认第一页
+            pageSize: 10,                       //每页的记录行数（*）
+            pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+            search: false,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+            strictSearch: true,
+            showColumns: false,                  //是否显示所有的列
+            showRefresh: false,                  //是否显示刷新按钮
+            //minimumCountColumns: 2,             //最少允许的列数
+            clickToSelect: true,                //是否启用点击选中行
+            //height: 500,                        //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+            uniqueId: "id",                     //每一行的唯一标识，一般为主键列
+            showToggle:false,                    //是否显示详细视图和列表视图的切换按钮
+            cardView: false,                    //是否显示详细视图
+            detailView: false,                   //是否显示父子表
+            columns: [
+            {
+                field: 'formNo',
+                title: '单号',
+                align: 'center'
+            }, {
+                field: 'proposerName',
+                title: '申请人姓名',
+                align: 'center'
+            }, {
+                field: 'proposerPhone',
+                title: '申请人联系电话',
+                align: 'center'
+            }, {
+                field: 'formType',
+                title: '分类',
+                align: 'center'
+            } ,{
+                field: 'createTime',
+                title: '提交时间',
+                align: 'center'
+            } ,{
+                field: 'apprStatus',
+                title: '状态',
+                align: 'center',
+                formatter:function(value,row,index){
+                	if(value == '0'){
+                		return '待审';
+                	}else if(value == '1'){
+                    	return '审核通过';
+                	}else if(value == '2'){
+                    	return '审核未通过';
+                	}else{
+                    	return '未知';
+                	}
+				}
+            }, {
+                field: 'formNo',
+                title: '操作',
+               	align: 'center',
+				width: '80',
+				formatter:function(value,row,index){
+					return '<a href="javascript:void(0);" onclick="auditClick('+value+')" style="color:#37A8F8;">审核</a>';
+				} 
+            }]
+        });
+    };
+
+    //得到查询的参数
+    oTableInit.queryParams = function (params) {
+    	var pageNum = 0;
+    	if(0 != params.offset){
+    		pageNum = params.offset/params.limit;
+    	}
+    	pageNum += 1;
+    	
+        var temp = {   //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+        	formType: '',   //类型，默认传
+        	currentPage: pageNum,  //页码
+        	pageNumber : params.limit,
+        	approvalStatus : 3  //未审核
+        };
+        return temp;
+    };
+    return oTableInit;
+};
+
+$(function () {
+	//1.初始化Table
+	var oTable = new TableInit();
+	oTable.Init();
+});
+
+function auditClick(formNo){
+	$('#mainPan').empty().load('approval/detail.api?formNo='+formNo);
+}
+</script>
+</html>		

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="eastrobot.robotdev.ticketsystem.dao.PollOptionsDao">
+
+	<resultMap id="BaseResultMap" type="eastrobot.robotdev.ticketsystem.model.PollOptions">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="topic_id" jdbcType="INTEGER" property="topicId" />
+		<result column="content" jdbcType="VARCHAR" property="content" />
+		<result column="seq" jdbcType="INTEGER" property="seq" />
+		<result column="is_answer" jdbcType="INTEGER" property="isAnswer" />
+	</resultMap>
+
+	<!-- 新增问卷调查 -->
+	<insert id="addPollOptions" parameterType="eastrobot.robotdev.ticketsystem.model.PollOptions" useGeneratedKeys="true" keyProperty="id">
+		insert into poll_options 
+			(topic_id,content,seq,is_answer) 
+		values 
+			(#{topicId},#{content},#{seq},#{isAnswer})
+	</insert>
+	
+	<!-- 通过surveyId查询当前问卷调查下所有的题目 -->
+	<select id="findAllPollOptions" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+		select * from poll_options 
+		where topic_id = #{topicId}
+	</select>
+	
+	<!-- 通过surveyId删除问卷调查题目 -->
+	<delete id="deletePollOptionsByTopicId">
+		delete from poll_options 
+		where topic_id = #{topicId}
+	</delete>
+	
+</mapper>

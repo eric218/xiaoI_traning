@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <title>表单提交页面Demo</title>
+    <!-- 添加移动设备支持且不允许放大缩小只能滚动 -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="description" content="表单提交页面Demo">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	
+    <!-- CSS -->
+    <!-- <link rel="stylesheet" href="http://fonts.useso.com/css?family=Roboto:400,100,300,500"> -->
+    <link rel="stylesheet" href="resource/assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="resource/assets/font-awesome/css/font-awesome.min.css">
+
+
+    <style type="text/css">
+    body {
+		background: #f1f4f7;
+		color: #5f6468;
+	}
+    </style>
+  </head>
+  
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top" role="navigation">
+    	<a class="navbar-brand" href="#"><span style="color:#30a5ff">世纪城社区</span>&nbsp;&nbsp;便民服务平台</a>
+    </div>
+    <div class="container">
+    	<div class="page-header">
+  			<h1>民政服务<small>老年证办理</small></h1>
+		</div>
+		<div>
+			<p>注意事项：
+			<p>接待时间：周一到周五〔节假日除外〕
+			<p>业务完成时限：证件齐全条件下，当场办理。
+			<p>收费标准：免费			
+		</div>
+		<div class="panel panel-default">
+  			<div class="panel-heading">
+  				<p>在线初审：在线提交资料，若通过审核将短信通知您前往柜台办理
+  			</div>
+  			<div class="panel-body">
+    			<form enctype="multipart/form-data">
+    				<div class="form-group">
+    					<label for="realName">申请人姓名&nbsp;*</label>
+    					<input type="text" class="form-control" id="realName" placeholder="">
+    				</div>
+    				<div class="form-group">
+    					<label for="idPic">身份证或户口本照片（小于2M）&nbsp;*</label>
+    					<div class="input-group" id="idPic-input-group">
+							<input type="file" accept="image/*" capture="camera" id="idPic" class="form-control">
+    						<span class="input-group-btn">
+    							<button class="btn btn-default" type="button" id="idPicRepickBtn">重新上传</button>
+    						</span>    						
+    					</div>
+    					<div id="idPic_ShowBox" style="padding-top: 10px;"></div>
+    				</div>
+    				<div class="form-group">
+    					<label for="personPic">本人近期一寸照（小于2M）&nbsp;*</label>
+    					<div class="input-group" id="personPic-input-group">
+							<input type="file" accept="image/*" capture="camera" id="personPic" class="form-control">
+    						<span class="input-group-btn">
+    							<button class="btn btn-default" type="button" id="personPicRepickBtn">重新上传</button>
+    						</span>
+    					</div>
+    					<div id="personPic_ShowBox" style="padding-top: 10px;"></div>
+    				</div>
+    				<div class="form-group">
+    					<label for="phoneNum">手机号&nbsp;*</label>
+    					<div class="input-group">
+    						<input type="text" class="form-control" id="phoneNum" placeholder="">
+    						<span class="input-group-btn">
+        						<button class="btn btn-default" type="button" id="getVerifyBtn">获取验证码</button>
+      						</span>
+      					</div>
+    				</div>
+    				<div class="form-group">
+    					<label for="verifyNum">验证码&nbsp;*</label>
+    					<input type="text" class="form-control" id="verifyNum" >
+    				</div>
+    				<div class="form-group">
+    					<button class="btn btn-info" type="button" id="submitBtn">提交申请</button>
+    				</div>
+    			</form>
+  			</div>
+		</div>
+    </div>
+
+
+    <!-- js -->
+    <script src="resource/assets/js/jquery-1.11.1.min.js"></script>
+    <script src="resource/assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="resource/assets/localResizeIMG/lrz.bundle.js"></script>
+    <script type="text/javascript">
+    $('#idPic').change(function(){
+    	lrz(this.files[0],{
+    		fieldName : 'UploadPic',
+    		quality : 0.6
+    	})
+        .then(function (rst) {
+        	var img = new Image();
+        	img.src = rst.base64;
+
+        	//下面的代码处理用于预览图片的size
+        	//限定最大宽度和最大高度，设定宽高比
+        	var maxWidth = $('#idPic_ShowBox').width();
+        	var maxHeight = maxWidth/4*3;//宽高比4:3
+        	
+        	img.onload = function(){
+        		// 当图片比图片框小时不做任何改变
+        		
+        		//原图宽高
+        		var originImgWidth = img.width;
+        		var originImgHeight = img.height;
+        		
+                if (originImgWidth < maxWidth && originImgHeight < maxHeight) {  
+                    //do nothing  
+                }else{//原图片宽高比例 大于 图片框宽高比例,则以框的宽为标准缩放，反之以框的高为标准缩放
+                	if (maxWidth/ maxHeight  <= originImgWidth / originImgHeight) //原图片宽高比例 大于 图片框宽高比例  
+                    {  
+                        img.width = maxWidth;   //以框的宽度为标准  
+                        img.height = maxWidth* ( originImgHeight / originImgWidth );  
+                    }   
+                    else {   //原图片宽高比例 小于 图片框宽高比例  
+                        img.width = maxHeight  * (originImgWidth / originImgHeight);  
+                        img.height = maxHeight  ;   //以框的高度为标准  
+                    } 
+                }
+        	}
+        	$('#idPic_ShowBox')
+    		.append('<p>预览</p>')//动态加载预览标签
+    		.append(img)//缩略图
+    		.append('<p><div class="btn btn-info" id="idPic_confirmBtn">确认上传</div>');//确认上传按钮
+            
+    		//为上传按钮绑定点击事件
+    		$('#idPic_confirmBtn').bind('click',function(){
+    			//alert('事件绑定成功');
+    			//点击上传执行
+                 $.ajax({
+               	url:'upload.api',
+               	type:'POST',       
+               	processData: false,
+                contentType: false,
+                data : rst.formData,
+               	success:function(response){
+               		var responseObj = JSON.parse(response);
+               		if(responseObj.type == "success"){
+               			//上传框体隐藏
+               			$('#idPic-input-group').hide();
+               			//处理返回的图片
+               			var returnImg = new Image();
+               			returnImg.src = responseObj.imgUrl;
+               			returnImg.width = img.width;
+               			returnImg.height = img.height;
+               			//展示框重绘
+               			$('#idPic_ShowBox').empty()               			
+               			.append(returnImg)
+						.append('<p><span class="label label-info">上传成功</span>');
+						
+               		}
+               	}
+               });  
+    		})
+    		
+            console.log(rst);
+        })
+        .catch(function (err) {
+            // 处理失败会执行
+            //alert('压缩失败')
+        })
+        .always(function () {
+            // 不管是成功失败，都会执行
+            //alert('总是执行')
+        });
+    });
+    //点击idPicRepickBtn重新上传清空idPic和idPic_ShowBox
+    $('#idPicRepickBtn').click(function(){
+    	$('#idPic').empty().val("");
+    	$('#idPic_ShowBox').empty();
+    	return $('#idPic').click();
+    });
+    //点击personPicRepickBtn重新上传清空personPic和personPic_ShowBox
+    $('#personPicRepickBtn').click(function(){
+    	$('#personPic').empty().val("");
+    	$('#personPic_ShowBox').empty();
+    	return $('#personPic').click();
+    });
+    </script>
+    <script type="text/javascript">
+/*先把这个js注释了，要测试一下图片上传
+		$(document).ready(function(){
+    	$('#getVerifyBtn').prop({
+  		  disabled: true
+  		});
+    	$('#submitBtn').prop({
+    		  disabled: true
+    	});
+    });
+    //验证码判定
+    $('#verifyNum').on('keyup',function(){
+		if($('#verifyNum').val().length == 4){
+	    	$('#submitBtn').prop({
+	    		  disabled: false
+	    	});
+		}else{
+	    	$('#submitBtn').prop({
+	    		  disabled: true
+	    	});
+		}
+			
+	});
+   	//手机号判定
+   	$('#phoneNum').on('keyup',function(){
+   		if($('#phoneNum').val().length == 11){
+	    	$('#getVerifyBtn').prop({
+	    		  disabled: false
+	    	});
+   		}else{
+	    	$('#getVerifyBtn').prop({
+	    		  disabled: true
+	    	});
+   		}
+   	}); */
+    </script>
+  </body>
+</html>

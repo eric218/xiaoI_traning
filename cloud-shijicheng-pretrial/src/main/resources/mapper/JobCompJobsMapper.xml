@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="eastrobot.robotdev.ticketsystem.dao.JobCompJobsMapper" >
+  <resultMap id="BaseResultMap" type="eastrobot.robotdev.ticketsystem.model.JobCompJobs" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="company_id" property="companyId" jdbcType="INTEGER" />
+    <result column="position" property="position" jdbcType="VARCHAR" />
+    <result column="education" property="education" jdbcType="VARCHAR" />
+    <result column="number" property="number" jdbcType="INTEGER" />
+    <result column="sex" property="sex" jdbcType="INTEGER" />
+    <result column="age" property="age" jdbcType="VARCHAR" />
+    <result column="salary" property="salary" jdbcType="VARCHAR" />
+    <result column="reqiurement" property="reqiurement" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, company_id, position, education, number, sex, age, salary, reqiurement
+  </sql>
+  
+  <select id="getCompJobsByJobNo" resultType="java.util.Map">
+SELECT
+	jcj.id AS jId,
+	jcj.position AS position,
+	jcj.education AS edu,
+	jcj.number AS recruitNum,
+	sexDic.dic_sex AS sex,
+	jcj.age AS age,
+	jcj.salary AS salary,
+	jcj.reqiurement AS reqiurement
+FROM
+	job_company_jobs jcj
+LEFT JOIN (
+	SELECT dd.id AS dId,dd.dic_name AS dic_sex FROM data_dictionary dd
+) sexDic ON sexDic.dId=jcj.sex
+WHERE jcj.job_no= #{jobNo}
+  </select>
+</mapper>

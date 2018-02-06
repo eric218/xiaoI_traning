@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="eastrobot.robotdev.ticketsystem.dao.ReproductiveCivicsInfoMapper" >
+  
+<select id="getMaritalMarriedDetail" resultType="java.util.Map" parameterType="java.util.Map">
+  SELECT
+	rci.id AS rId,
+	rci.female_name AS femaleName,
+	rci.female_id AS femaleIdCard,
+  CONCAT(SUBSTR(rci.female_id,7,4),'-',SUBSTR(rci.female_id,11,2),'-',SUBSTR(rci.female_id,13,2)) AS femaleBirthday,
+	feMaStus.dic_fe_marr_status AS feMaritalStatus,
+	CONCAT(feRegPro.fe_reg_province,feRegCity.fe_reg_city,feRegArea.fe_reg_area,feRegComm.fe_reg_comm,rci.female_registered_address) AS femaleRegAddress,
+	CONCAT(feDomPro.fe_dom_province,feDomCity.fe_dom_city,feDomArea.fe_dom_area,feDomComm.fe_dom_area,rci.female_domicile_address) AS femaleDomAddress,	
+	rci.male_name  AS maleName,
+	rci.male_id AS maleIdCard,
+	CONCAT(SUBSTR(rci.male_id,7,4),'-',SUBSTR(rci.male_id,11,2),'-',SUBSTR(rci.male_id,13,2)) AS maleBirthday,
+	maleMaStus.dic_male_marr_status AS maleMaritalStatus,
+  CONCAT(maleRegPro.male_reg_province,maleRegCity.male_reg_city,maleRegArea.male_reg_area,maleRegComm.male_reg_Comm,rci.male_registered_address) AS maleRegAddress,
+	CONCAT(maleDomPro.male_dom_province,maleDomCity.male_dom_city,maleDomArea.male_dom_area,maleDomComm.male_dom_comm,rci.male_domicile_address) AS maleDomAddress,
+	rci.marriage_certificate_number AS marrCertiNumber,
+	DATE_FORMAT(rci.marriage_certificate_date,'%Y-%m-%d') AS marrCertiDate,
+	rci.marriage_certificate_organ AS marrCertiOrgan,
+	rci.children_number AS childerNum,
+	rci.son_number AS sonNum,
+	rci.daughter_number AS daughterNum,
+	rci.pregnancy AS isPregancy,
+	rci.pregnancy_weeks AS pregnancyWeeks,
+	noti.approval_person AS approvalPerson,
+	noti.approval_result AS approvalResult,
+	noti.approval_status AS approvalStatus,
+	noti.approval_time AS approvovalTime,
+	noti.create_time AS proposerTime,
+	noti.proposer_name  AS proposerName,
+	dd.dd_martia_status AS proMariStatus,
+	noti.formNo AS formNo
+FROM
+	reproductive_civics_info rci
+LEFT JOIN (
+	SELECT d.id AS dId,d.dic_name AS dic_fe_marr_status FROM data_dictionary d
+) feMaStus ON feMaStus.dId = rci.female_marital_status
+LEFT JOIN (
+  SELECT a.ID AS aId, a.AREA_NAME AS fe_reg_province  FROM area a
+) feRegPro ON feRegPro.aId=rci.female_registered_province
+LEFT JOIN (
+  SELECT a.ID AS aId, a.AREA_NAME AS fe_reg_city  FROM area a
+) feRegCity ON feRegCity.aId=rci.female_registered_city
+LEFT JOIN (
+  SELECT a.ID AS aId, a.AREA_NAME AS fe_reg_area  FROM area a
+) feRegArea ON feRegArea.aId =rci.female_registered_area
+LEFT JOIN (
+  SELECT a.ID AS aId, a.AREA_NAME AS fe_reg_comm  FROM area a
+) feRegComm ON feRegComm.aId =rci.female_registered_community
+LEFT JOIN (
+  SELECT a.ID AS aId, a.AREA_NAME AS fe_dom_province  FROM area a
+) feDomPro ON feDomPro.aId=rci.female_domicile_province
+LEFT JOIN (
+  SELECT a.ID AS aId, a.AREA_NAME AS fe_dom_city  FROM area a
+) feDomCity ON feDomCity.aId=rci.female_domicile_city
+LEFT JOIN (
+  SELECT a.ID AS aId, a.AREA_NAME AS fe_dom_area  FROM area a
+) feDomArea ON feDomArea.aId=rci.female_domicile_area
+LEFT JOIN (
+  SELECT a.ID AS aId, a.AREA_NAME AS fe_dom_area  FROM area a
+) feDomComm ON feDomComm.aId=rci.female_domicile_community
+LEFT JOIN (
+	SELECT d.id AS dId,d.dic_name AS dic_male_marr_status FROM data_dictionary d
+) maleMaStus ON maleMaStus.dId = rci.male_marital_status
+LEFT JOIN (
+  SELECT a.ID AS aId, a.AREA_NAME AS male_reg_province  FROM area a
+) maleRegPro ON maleRegPro.aId=rci.male_registered_province
+LEFT JOIN (
+  SELECT a.ID AS aId, a.AREA_NAME AS male_reg_city  FROM area a
+) maleRegCity ON maleRegCity.aId=rci.male_registered_city
+LEFT JOIN (
+  SELECT a.ID AS aId, a.AREA_NAME AS male_reg_area  FROM area a
+) maleRegArea ON maleRegArea.aId =rci.male_registered_area
+LEFT JOIN (
+  SELECT a.ID AS aId, a.AREA_NAME AS male_reg_Comm  FROM area a
+) maleRegComm ON maleRegComm.aId =rci.male_registered_community
+LEFT JOIN (
+  SELECT a.ID AS aId, a.AREA_NAME AS male_dom_province  FROM area a
+) maleDomPro ON maleDomPro.aId=rci.male_domicile_province
+LEFT JOIN (
+  SELECT a.ID AS aId, a.AREA_NAME AS male_dom_city  FROM area a
+) maleDomCity ON maleDomCity.aId=rci.male_domicile_city
+LEFT JOIN (
+  SELECT a.ID AS aId, a.AREA_NAME AS male_dom_area  FROM area a
+) maleDomArea ON maleDomArea.aId=rci.male_domicile_area
+LEFT JOIN (
+  SELECT a.ID AS aId, a.AREA_NAME AS male_dom_comm  FROM area a
+) maleDomComm ON maleDomComm.aId=rci.male_domicile_community
+LEFT JOIN (
+	SELECT n.form_no AS formNo,
+				 n.approval_status,
+				 n.approval_result,
+				 n.approval_person,
+				 n.approval_time,
+				 n.create_time,
+				 n.proposer_name,
+				 n.propose_marital_status
+	FROM notify n
+) noti ON noti.formNo=rci.notify_form_id
+LEFT JOIN (
+	SELECT d.id AS dId,d.dic_name AS dd_martia_status FROM data_dictionary d
+) dd ON dd.dId=noti.propose_marital_status
+WHERE rci.notify_form_id= #{notifyFormId,jdbcType=VARCHAR}
+  </select>
+  
+</mapper>

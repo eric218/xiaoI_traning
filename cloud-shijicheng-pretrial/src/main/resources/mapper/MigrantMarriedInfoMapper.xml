@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="eastrobot.robotdev.ticketsystem.dao.MigrantMarriedInfoMapper" >
+  <select id="getMaritalMarriedDetail" resultType="java.util.Map" parameterType="java.util.Map">
+  SELECT 
+	mi.id AS mId,
+	mi.female_name AS femaleName,
+	mi.female_id AS femaleId,
+	feMs.female_martial_status AS femaleMartialStatus,
+	mi.male_name AS maleName,
+	mi.male_id AS maleId,
+	maleMs.male_martial_status AS maleMartialStatus,
+	mi.marriage_certificate AS marriageCertificat,
+	CONCAT(rap.reg_province_area,rac.reg_city_area,raa.reg_area_area,racy.reg_comm_area,mi.registered_address) AS regAddr,
+  CONCAT(dap.dom_province_area,dac.dom_city_area,daa.dom_area_area,dacy.dom_comm_area,mi.domicile_address) AS domAddr,
+	mi.children_number AS childrenNum,
+	mi.son_number AS sonNum,
+	mi.daughter_number AS daughterNum,
+	mi.departure AS isDeparture,
+	DATE_FORMAT(mi.departure_time,'%Y-%m-%d') AS departureTime,
+	mi.birth_control AS isBirthControl,
+	dConMode.dic_contraceptive_mode AS conTraceptiveMode,
+	mi.gynecological_examination AS isGynecologicalCheck,
+  noti.propose_marital_status AS maritalStatusCode,
+  noti.formNo AS notifyFormId,
+	noti.approval_result AS approvalResult,
+	noti.approval_person AS approvalPerson,
+	noti.approval_status AS approvalStatus,
+	noti.approval_time AS approvalTime,
+	noti.proposer_name AS proposerName,
+	noti.create_time AS proposerTime
+FROM
+	migrant_married_info mi
+LEFT JOIN (
+	SELECT dd.id AS dId,dd.dic_name AS female_martial_status FROM data_dictionary dd
+) feMs ON feMs.dId=mi.female_marital_status
+LEFT JOIN (
+	SELECT dd.id AS dId,dd.dic_name AS male_martial_status FROM data_dictionary dd
+) maleMs ON maleMs.dId=mi.male_marital_status
+LEFT JOIN (
+	SELECT a.ID AS aId,a.AREA_NAME AS reg_province_area FROM area a
+) rap ON rap.aId=mi.registered_province
+LEFT JOIN (
+	SELECT a.ID AS aId,a.AREA_NAME AS reg_city_area FROM area a
+) rac ON rac.aId=mi.registered_city
+LEFT JOIN (
+	SELECT a.ID AS aId,a.AREA_NAME AS reg_area_area FROM area a
+) raa ON raa.aId=mi.registered_area
+LEFT JOIN (
+	SELECT a.ID AS aId,a.AREA_NAME AS reg_comm_area FROM area a
+) racy ON racy.aId= mi.registered_community
+LEFT JOIN (
+	SELECT a.ID AS aId,a.AREA_NAME AS dom_province_area FROM area a
+) dap ON dap.aId=mi.domicile_province
+LEFT JOIN (
+	SELECT a.ID AS aId,a.AREA_NAME AS dom_city_area FROM area a
+) dac ON dac.aId=mi.domicile_city
+LEFT JOIN (
+	SELECT a.ID AS aId,a.AREA_NAME AS dom_area_area FROM area a
+) daa ON daa.aId=mi.domicile_area
+LEFT JOIN (
+	SELECT a.ID AS aId,a.AREA_NAME AS dom_comm_area FROM area a
+) dacy ON dacy.aId= mi.domicile_community
+LEFT JOIN (
+	SELECT d.id AS dId,d.dic_name AS  dic_contraceptive_mode FROM data_dictionary d
+) dConMode ON dConMode.dId = mi.contraceptive_mode
+LEFT JOIN (
+	SELECT n.form_no AS formNo,
+				 n.approval_status,
+				 n.approval_result,
+				 n.approval_person,
+				 n.approval_time,
+				 n.create_time,
+				 n.proposer_name,
+				 n.propose_marital_status
+	FROM notify n
+) noti ON noti.formNo=mi.notify_form_id
+WHERE
+	mi.notify_form_id = #{notifyFormId,jdbcType=VARCHAR}
+  
+  </select>
+</mapper>

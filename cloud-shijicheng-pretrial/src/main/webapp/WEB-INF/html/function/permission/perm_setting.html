@@ -1,0 +1,419 @@
+<!DOCTYPE html >
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<link href="resource/assets/jquery-ztree/metroStyle.css" rel="stylesheet">
+	</head>
+	<body>		
+		<div class="row">
+			<ol class="breadcrumb col-xs-12 col-md-12 col-lg-12">
+  				<li><a href="main">主页</a></li>
+  				<li><a href="#">权限管理</a></li>
+  				<li class="active">角色管理</li>
+			</ol>
+		</div>
+
+		<div class="row" style="margin-top: 40px;">
+			<div class="col-sm-8 col-sm-offset-2 form-box">
+				<!-- 修改密码div -->
+				<div class="login-panel panel panel-warning">
+					<div class="panel-heading"><strong>角色管理</strong></div>
+					
+					<div class="panel-body">
+						<!-- 用户表 -->
+						<div class="bootstrap-table">
+							<div class="fixed-table-container">
+								<div class="fixed-table-header">
+									<table></table>
+								</div>
+								<div class="fixed-table-body">
+									<table class="table table-hover">
+										<thead>
+											<tr>
+												<th>角色名</th>
+												<!-- <th>权限值</th> -->
+												<th>权限描述</th>
+												<th>操作</th>
+											</tr>
+										</thead>
+										<tbody id="allRolesTable">
+											<!-- 表数据体 -->
+																					
+										</tbody>
+									</table>
+								</div>
+								<div class="fixed-table-pagination">
+									<div class="pull-right pagination">
+										<div class="btn btn-primary" id="addNewRoleBtn">添加新角色</div>
+									</div>
+								</div>
+							</div>							
+						</div>
+					</div>			
+				</div>			
+			</div>
+		</div>
+		
+		<!-- 修改权限模态窗 -->
+		<!-- model -->
+		<div class="modal fade" id="changePermission" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+		  	<div class="modal-dialog">
+		    	<div class="modal-content">
+		      		<div class="modal-header">
+		        		<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">取消</span></button>
+		        		<h4 class="modal-title">修改角色权限</h4>
+		      		</div>
+		      		<div class="modal-body">
+		      			<p>勾选下面的功能列表中的功能项，修改角色权限并保存</p>
+						<!-- 显示功能树 -->
+						<div id="allFnTree" class="ztree">
+							
+						</div>
+		      		</div>
+		      		<div class="modal-footer">
+		        		<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+		        		<button type="button" class="btn btn-primary" id="changePermissionBtn">保存</button>
+		      		</div>
+		    	</div><!-- /.modal-content -->
+		  	</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+		
+		<!-- 修改描述模态窗 -->
+		<!-- model -->
+		<div class="modal fade" id="changeDescription" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+		  	<div class="modal-dialog">
+		    	<div class="modal-content">
+		      		<div class="modal-header">
+		        		<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">取消</span></button>
+		        		<h4 class="modal-title">修改角色描述</h4>
+		      		</div>
+		      		<div class="modal-body">
+		      			<form role="form">
+		      				<div class="form-group">
+								<label for="">请输入对该角色的描述信息</label>
+								<input class="form-control" placeholder="" id="new_description" type="text" value="" data-container="body" data-toggle="popover" data-placement="right" data-content="描述不能为空">
+							</div>
+		      			</form>
+		      		</div>
+		      		<div class="modal-footer">
+		        		<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+		        		<button type="button" class="btn btn-primary" id="changeDescriptionBtn">保存</button>
+		      		</div>
+		    	</div><!-- /.modal-content -->
+		  	</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+		
+		<!-- 删除角色模态窗 -->
+		<div class="modal fade" id="confirmDeleteRole" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+		  	<div class="modal-dialog">
+		    	<div class="modal-content">
+		      		<div class="modal-header">
+		        		<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">取消</span></button>
+		        		<h4 class="modal-title">删除角色</h4>
+		      		</div>
+		      		<div class="modal-body">
+		        		<p>您是否确认删除该角色？（该操作执行后将不能撤销！）</p>
+		      		</div>
+		      		<div class="modal-footer">
+		        		<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+		        		<button type="button" class="btn btn-primary" id="confirmDeleteRoleBtn">确认</button>
+		      		</div>
+		    	</div><!-- /.modal-content -->
+		  	</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+		
+		<!-- 添加新角色模态窗 -->
+		<div class="modal fade" id="addNewRole" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+		  	<div class="modal-dialog">
+		    	<div class="modal-content">
+		      		<div class="modal-header">
+		        		<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">取消</span></button>
+		        		<h4 class="modal-title">添加新角色</h4>
+		      		</div>
+		      		<div class="modal-body">
+		        		<p>您可以通过填写下列表单来创建一个新的角色</p>
+		        		<!-- 表单：角色名，描述 -->
+		        		<div>
+		        			<form role="form">
+		      					<div class="form-group">
+									<label for="">角色名(角色名不能与已有角色重名)</label>
+									<input class="form-control" placeholder="" id="new_roleName" type="text" value="" data-container="body" data-toggle="popover" data-placement="right" data-content="角色名不能为空">
+								</div>
+								<div class="form-group">
+									<label for="">角色描述</label>
+									<input class="form-control" placeholder="" id="new_roleDescription" type="text" value="" data-container="body" data-toggle="popover" data-placement="right" data-content="角色描述不能为空">
+								</div>
+		      				</form>
+		        		</div>
+		        		<!-- 显示功能树选择对应权限 -->
+		        		<div class="form-group">
+		        			<label for="">您可以通过勾选下面的功能项来给新角色赋予权限</label>
+							<div id="addNewRole_allFnTree" class="ztree">
+								
+							</div>
+						</div>
+		      		</div>
+		      		<div class="modal-footer">
+		        		<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+		        		<button type="button" class="btn btn-primary" id="addNewRoleBtn_modal">确认</button>
+		      		</div>
+		    	</div><!-- /.modal-content -->
+		  	</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+ 		<script src="resource/assets/jquery-ztree/jquery.ztree.all.min.js"></script>
+		<!-- 页面加载时加载角色表 -->
+		<script type="text/javascript">
+			$(document).ready(function(){
+				//加载时请求服务器数据
+				$.ajax({
+					type:'POST',
+					url:'main/perm_getAllRoles.api',
+					success:function(data){
+						var params = JSON.parse(data);
+						for(var i = 0 ; i < params.length ; i++){
+							$('#allRolesTable').append('<tr></tr>');
+							$('#allRolesTable tr:last-child').append('<td>'+params[i].name+'</td>')
+							/* .append('<td>'+params[i].perm+'</td>') */
+							.append('<td>'+params[i].desc+'</td>')
+							.append('<td id="'+params[i].id+'"></td>');
+							
+							$('#'+params[i].id).append('<a href="javascript:void(0);">修改权限</a>&nbsp;&nbsp;')
+							.append('<a href="javascript:void(0);">修改描述</a>&nbsp;&nbsp;')
+							.append('<a href="javascript:void(0);">删除角色</a>&nbsp;&nbsp;');
+							//绑定a标签
+							$('#'+params[i].id+' a:contains("修改权限")').on('click',function(){
+								$('#changePermission').data('id',$(this).parent().attr('id'));
+								//远程获取树
+								var roleId = $('#changePermission').data('id');
+								 $.ajax({
+									type:'POST',
+									url:'main/getAllFnTree.api',
+									data:{
+										roleId : roleId
+									},
+									success:function(data){
+										var tree = JSON.parse(data);
+										var zTreeObj;
+										// zTree 的参数配置，深入使用请参考 API 文档（setting 配置详解）
+										var setting = {
+											data:{
+												simpleData:{
+													enable:true,
+													idKey:"id",
+													pIdKey:"pid",
+													rootPId:0
+												}									
+											},
+											check:{
+												enable:true,
+												chkStyle: "checkbox",
+												chkboxType: { "Y": "ps", "N": "ps" },
+												nocheck:false
+											}
+										  };
+										 // zTree 的数据属性，深入使用请参考 API 文档（zTreeNode 节点数据详解）
+										 var zNodes = JSON.parse(data);
+										 
+										 $(document).ready(function(){
+											 zTreeObj = $.fn.zTree.init($("#allFnTree"), setting, zNodes);
+											 zTreeObj.expandAll(true);
+										 });
+									},
+									error:function(){
+										alert('获取功能树失败')
+									}
+								}); 
+								$('#changePermission').modal('show');
+							});
+							$('#'+params[i].id+' a:contains("修改描述")').on('click',function(){
+								$('#changeDescription').data('id',$(this).parent().attr('id')).modal('show');
+							});
+							$('#'+params[i].id+' a:contains("删除角色")').on('click',function(){
+								$('#confirmDeleteRole').data('id',$(this).parent().attr('id')).modal('show');
+							});							
+						}
+					},
+					error:function(){
+						alert('未能获取服务器数据，请坚持网络连接')
+					}
+				});					
+				
+				$('#addNewRoleBtn').on('click',function(){
+					//添加加载功能树的代码addNewRole
+					 $.ajax({
+					type:'POST',
+					url:'main/getAllFnTree.api',
+					data:{
+						roleId : ""
+					},
+					success:function(data){
+						var tree = JSON.parse(data);
+						var zTreeObj;
+						// zTree 的参数配置，深入使用请参考 API 文档（setting 配置详解）
+						var setting = {
+							data:{
+								simpleData:{
+									enable:true,
+									idKey:"id",
+									pIdKey:"pid",
+									rootPId:0
+								}									
+							},
+							check:{
+								enable:true,
+								chkStyle: "checkbox",
+								chkboxType: { "Y": "ps", "N": "ps" },
+								nocheck:false
+							}
+						  };
+						 // zTree 的数据属性，深入使用请参考 API 文档（zTreeNode 节点数据详解）
+						 var zNodes = JSON.parse(data);
+						 
+						 $(document).ready(function(){
+							 zTreeObj = $.fn.zTree.init($("#addNewRole_allFnTree"), setting, zNodes);
+							 zTreeObj.expandAll(true);
+						 });
+					},
+					error:function(){
+						alert('获取功能树失败')
+					}
+				});  
+					$('#addNewRole').modal('show');
+				});
+				
+			}); 
+			//编写提交修改后功能的代码
+			$('#changePermissionBtn').click(function(){
+				//获取所选的节点id的集合
+				var treeObj = $.fn.zTree.getZTreeObj("allFnTree");
+				var ckeckedNodes = treeObj.getCheckedNodes(true);
+				var list = new Array();
+				for(var i = 0 ; i < ckeckedNodes.length ; i++){
+					list[i] = ckeckedNodes[i].id;
+				}
+				$('#changePermission').modal('hide');
+				$.ajax({
+					type:'POST',
+					url:'main/submitChangedPermission.api',
+					data:{
+						fnIds : JSON.stringify(list),
+						roleId : $('#changePermission').data('id')
+					},
+					success:function(data){
+						var json = JSON.parse(data);
+						if(json.type == "success"){
+							alert('权限修改成功！');
+							$('#mainPan').empty().load('main/getPermissionSetting.api');
+						}
+						else
+							alert('权限修改失败！');
+					},
+					error:function(){
+						alert('权限修改失败，与服务器失去联系，请检查你的网络连接！');
+					}
+				});
+			});
+			//编写提交修改描述的请求
+			$('#changeDescriptionBtn').click(function(){
+				var roleId = $('#changeDescription').data('id');
+				$('#changeDescription').modal('hide');
+				var new_description = $('#new_description').val();
+				if(new_description.length == 0){
+					$('#new_description').popover('show');
+					return;
+				}
+				
+				$.ajax({
+					type:'POST',
+					url:'main/changeRoleDescription.api',
+					data:{
+						roleId : roleId,
+						new_description : new_description
+					},
+					success:function(data){
+						var json = JSON.parse(data);
+						if(json.type == "success"){
+							alert('修改角色描述成功！');
+							$('#mainPan').empty().load('main/getPermissionSetting.api');
+						}
+						else
+							alert('修改角色描述失败！');
+					},
+					error:function(){
+						alert('修改角色描述失败，与服务器失去联系，请检查你的网络连接！');
+					}
+				});
+			});
+			
+			//编写提交删除用户的代码
+			$('#confirmDeleteRoleBtn').click(function(){
+				var roleId = $('#confirmDeleteRole').data('id');
+				$('#confirmDeleteRole').modal('hide');
+				$.ajax({
+					type:'POST',
+					url:'main/deleteRole.api',
+					data:{
+						roleId : roleId
+					},
+					success:function(data){
+						var json = JSON.parse(data);
+						if(json.type == "success"){
+							alert('删除角色成功！');
+							$('#mainPan').empty().load('main/getPermissionSetting.api');
+						}
+						else
+							alert('删除角色失败！');
+					},
+					error:function(){
+						alert('删除角色失败，与服务器失去联系，请检查你的网络连接！');
+					}
+				});
+			});		
+			
+			//提交创建新用户请求的代码
+			$('#addNewRoleBtn_modal').click(function(){
+				$('#addNewRole').modal('hide');
+				//角色名和角色描述
+				var new_roleName = $('#new_roleName').val();
+				var new_roleDescription = $('#new_roleDescription').val();
+				if(new_roleName.length == 0){
+					$('#new_roleName').popover('show');
+					return;
+				}
+				if(new_roleDescription.length == 0){
+					$('#new_roleDescription').popover('show');
+					return;
+				}
+				//获取选择的功能树
+				var treeObj = $.fn.zTree.getZTreeObj("addNewRole_allFnTree");
+				var ckeckedNodes = treeObj.getCheckedNodes(true);
+				var list = new Array();
+				for(var i = 0 ; i < ckeckedNodes.length ; i++){
+					list[i] = ckeckedNodes[i].id;
+				}
+				//发送请求给后台
+				$.ajax({
+					type:'POST',
+					url:'main/addNewRole.api',
+					data:{
+						new_roleName : new_roleName,
+						new_roleDescription : new_roleDescription,
+						list : JSON.stringify(list)
+					},
+					success:function(data){
+						var json = JSON.parse(data);
+						if(json.type == "success"){
+							alert('添加新角色成功！');
+							$('#mainPan').empty().load('main/getPermissionSetting.api');
+						}
+						else
+							alert('添加新角色失败！');
+					},
+					error:function(){
+						alert('添加新角色失败，与服务器失去联系，请检查你的网络连接！');
+					}
+				});
+			});
+		</script>
+	</body>
+</html>

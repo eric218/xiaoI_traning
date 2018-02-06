@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="eastrobot.robotdev.ticketsystem.dao.JobPublishMapper" >
+  <insert id="insert" parameterType="eastrobot.robotdev.ticketsystem.model.JobPublish" useGeneratedKeys="true" keyProperty="id">
+    insert into job_publish (id, job_title, publisher, 
+      create_time, content)
+    values (#{id,jdbcType=INTEGER}, #{jobTitle,jdbcType=VARCHAR}, #{publisher,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{content,jdbcType=LONGVARCHAR})
+  </insert>
+  
+<select id="getAllPublishJob" resultType="java.util.Map" parameterType="java.util.Map">
+  SELECT
+	jp.id AS jId,
+	jp.job_title AS jobTitle,
+	jp.publisher AS publisher,
+	jp.create_time AS createTime
+FROM
+	job_publish jp
+ORDER BY jp.create_time DESC
+  </select>
+  
+<select id="getPublishDetailById" resultType="java.util.Map" parameterType="java.lang.Integer">
+SELECT
+	jp.id AS jId,
+	jp.job_title AS jobTitle,
+	jp.publisher AS publisher,
+	jp.create_time AS createTime,
+	jp.content
+FROM
+	job_publish jp
+WHERE 1=1
+AND jp.id= #{jobId,jdbcType=INTEGER}
+  </select>
+  
+  
+  <update id="updateByPrimaryKeySelective" parameterType="eastrobot.robotdev.ticketsystem.model.JobPublish" >
+    update job_publish
+    <set >
+      <if test="jobTitle != null" >
+        job_title = #{jobTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="publisher != null" >
+        publisher = #{publisher,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <delete id="deletePublishDetailById" parameterType="java.lang.Integer">  
+        DELETE FROM job_publish 
+        WHERE 1=1
+        AND id= #{jobId,jdbcType=INTEGER} 
+  </delete>
+
+</mapper>

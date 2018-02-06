@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:http-conf="http://cxf.apache.org/transports/http/configuration"
+	xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
+	http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd
+	http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd"
+	default-autowire="byName" default-destroy-method="destroy">
+	
+	<!-- 设置使用注解的类所在的包  -->
+	<context:component-scan base-package="eastrobot.robotdev.ticketsystem">
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+	</context:component-scan>
+	
+	<!-- 引入其他配置文件 -->
+	<bean id="setting" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="locations">
+			<list>
+				<value>classpath:app.properties</value>
+				<value>classpath:jdbc.properties</value>
+			</list>
+		</property>
+		<property name="ignoreResourceNotFound" value="true" />
+		<property name="fileEncoding" value="UTF-8"></property>
+	</bean>
+		
+	<!-- 配置数据源   dbcp数据库连接池 -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+      <!-- jdbc 连接配置 -->
+      <property name="driverClassName" value="#{setting['jdbc.driverClassName']}"/>
+      <property name="url" value="#{setting['jdbc.url']}"/>
+      <property name="username" value="#{setting['jdbc.username']}"/>
+      <property name="password" value="#{setting['jdbc.password']}"/>
+      <property name="defaultAutoCommit" value="false"></property>
+      <!-- 连接池配置 -->
+      <!-- 连接池启动时的初始连接数 -->
+      <property name="initialSize" value="#{setting['dbcp.initialSize']}"/>
+      <!-- 连接池最大连接数 -->
+      <property name="maxActive" value="#{setting['dbcp.maxActive']}"/>
+      <!-- 最大空闲值.当经过一个高峰时间后，连接池可以慢慢将已经用不到的连接慢慢释放一部分，一直减少到maxIdle为止 -->
+      <property name="maxIdle" value="#{setting['dbcp.maxIdle']}"/>
+      <!-- 最小空闲值.当空闲的连接数少于阀值时，连接池就会预申请去一些连接，以免洪峰来时来不及申请 -->
+      <property name="minIdle" value="#{setting['dbcp.minIdle']}"/>
+      <!--给出一条简单的sql语句进行验证-->
+      <property name="validationQuery" value="#{setting['jdbc.validationQuery']}"/>
+	</bean>
+
+    <!-- (事务管理)transaction manager, use JtaTransactionManager for global tx -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">  
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+    
+    <!-- 回滚设置 -->
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+    	<tx:attributes>
+    		<tx:method name="*" propagation="REQUIRED" read-only="false"
+				rollback-for="java.lang.Exception"/>
+    	</tx:attributes>
+    </tx:advice>
+    
+    <aop:config>
+		<aop:pointcut id="aopPointcut"
+			expression="execution(public * eastrobot.robotdev.ticketsystem.service.*.*(..))" /> <!--把事务控制在Service层 -->
+		<aop:advisor pointcut-ref="aopPointcut" advice-ref="txAdvice" />
+	</aop:config>
+    
+	<!-- spring和MyBatis完美整合，不需要mybatis的配置映射文件 -->  
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">  
+        <property name="dataSource" ref="dataSource" />  
+        <!-- 配置MyBaties全局配置文件:mybatis-config.xml -->
+		<property name="configLocation" value="classpath:mybatis-config.xml" />
+        <property name="mapperLocations" value="classpath:mapper/*.xml"/>  
+        <property name="typeAliasesPackage" value="eastrobot.robotdev.ticketsystem.model"/>
+    </bean> 
+	
+	<!-- DAO接口所在包名，Spring会自动查找其下的类 -->  
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">  
+        <property name="basePackage" value="eastrobot.robotdev.ticketsystem.dao" />  
+        <!-- <property name="sqlSessionFactory" ref="sqlSessionFactory"></property> -->
+    </bean>
+    
+
+    <tx:annotation-driven proxy-target-class="false" transaction-manager="transactionManager"/>
+    <context:component-scan base-package="eastrobot.robotdev.ticketsystem.service" />
+
+
+ </beans>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="eastrobot.robotdev.ticketsystem.dao.Bk_FnDao">
+	<insert id="insert" parameterType="Bk_Fn" keyProperty="id">
+		insert into bk_fn
+			(id,name,parent_id,description,url,icon) 
+		values 
+			(#{id},#{name},#{parent_id},#{description},#{url},#{icon})
+	</insert>
+	
+	<delete id="delete" parameterType="int">
+		delete from bk_fn where id=#{id}
+	</delete>
+	
+	<update id="update" parameterType="Bk_Fn">
+		update bk_fn set name=#{name},parent_id=#{parent_id},description=#{description},url=#{url},icon=#{icon} where id=#{id}
+	</update>
+	
+	<select id="select" parameterType="int" resultType="Bk_Fn">
+		select * from bk_fn where id=#{id}
+	</select>
+	
+	<select id="selectAll" resultType="Bk_Fn">
+		select * from bk_fn order by id asc;
+	</select>
+</mapper>

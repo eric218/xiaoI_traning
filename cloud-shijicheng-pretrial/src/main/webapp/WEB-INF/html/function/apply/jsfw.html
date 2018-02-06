@@ -1,0 +1,263 @@
+<!DOCTYPE html >
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	</head>
+	<body>
+		<div class="row">
+			<ol class="breadcrumb col-xs-12 col-md-12 col-lg-12">
+  				<li><a href="main">主页</a></li>
+  				<li><a href="#">待审申请</a></li>
+  				<li class="active">计生服务</li>
+			</ol>
+		</div>
+		
+		<!-- content div -->
+		<div class="row" style="margin-top: 20px;">
+			<div class="col-sm-12">
+				<div class="login-panel panel panel-info">
+					<div class="panel-heading"><strong>计生服务预审</strong></div>
+					<div class="panel-body">
+						<!-- 生殖保健服务证申请列表 -->
+						<div class="bootstrap-table">
+							<div class="fixed-table-container">
+								<div class="fixed-table-header">
+									<table></table>
+								</div>
+							</div>
+							<div class="fixed-table-body">
+								<table class="table table-hover">
+									<thead>
+										<tr>
+											<th>单号</th>
+											<th>申请人姓名</th>
+											<th>申请人联系电话</th>
+											<th>提交时间</th>
+											<th>状态</th>
+											<th>操作</th>
+										</tr>
+									</thead>
+									<tbody id="szbjfwzTable">
+										<!-- 表数据结构体 -->
+										
+									</tbody>
+								</table>
+							</div><!-- ./end of table -->
+						</div>
+					</div><!-- ./end of panelbody -->
+				</div><!-- ./end of panel -->
+			</div><!-- ./end of col -->
+		</div><!-- ./end of content div -->
+		
+		<!-- model -->
+		<div class="modal fade bs-example-modal-lg" id="trialInfoModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">取消</span></button>
+						<h3 class="modal-title"><b>审核</b></h3><p></p>
+						<div id="realNameAndTelNum">
+						<!-- 姓名和联系电话 -->
+						</div>						
+					</div>
+					
+					<div class="modal-body" id="applyData">
+						<div class="container">
+							<div class="row">
+								<div class="col-md-2" style="overflow:scroll;height:380px;" id="smallPicShowBox">
+    							<!-- 缩略图 -->
+  								</div><!-- ./end of col-2 -->
+  								<div class="col-md-7" align="center" style="overflow:scroll;height:380px;" id="bigPicShowBox">
+  								<!-- 大图 -->   								
+  								</div><!-- ./end of col-7 -->  								
+							</div><!-- ./end of row -->
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+						<button type="button" class="btn btn-danger" id="trialRefuseBtn">不通过</button>
+						<button type="button" class="btn btn-primary" id="trialThroughBtn">通过</button>
+					</div>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+		<div class="modal fade" id="editReasonModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" id="closeEditReasonModal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button>
+		        <h4 class="modal-title">审核未通过原因</h4>
+		      </div>
+		      <div class="modal-body">
+		        <p>请编辑不通过审核的原因，将会发送给申请人！</p>
+		        <textarea rows="3" cols="80" placeholder="您的申请未通过..." id="reasonTextarea"></textarea>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-default" id="closeEditReasonModalBtn" data-dismiss="modal">关闭</button>
+		        <button type="button" class="btn btn-primary" id="confirmEditReasonModalBtn">确认</button>
+		      </div>
+		    </div><!-- /.modal-content -->
+		  </div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+	</body>
+	<script type="text/javascript">
+	$(document).ready(function(){
+		$.ajax({
+			type:'POST',
+			url:'main/getApplyData.api',
+			data:{
+				fnId : '13'
+			},
+			success:function(data){
+				var params = JSON.parse(data);
+				for(var i = 0 ; i < params.length ; i++){
+					$('#szbjfwzTable').append('<tr id="'+params[i].tk_id+'"><tr>');
+					$('#'+params[i].tk_id).append('<td>'+params[i].tk_id+'</td>')
+					.append('<td>'+params[i].tk_name+'</td>')
+					.append('<td>'+params[i].tk_telNum+'</td>')
+					.append('<td>'+params[i].tk_datetime+'</td>')
+					.append('<td>'+params[i].status+'</td>');
+					if(params[i].status == '待审'){
+						$('#'+params[i].tk_id).append('<td><a href="javascript:void(0);">审批<a></td>');
+						$('#'+params[i].tk_id+' td a').data('param',params[i]).on('click',function(){
+							var data = $(this).data('param');
+							//先用数据生成模态窗的内容
+							//页头的姓名和联系电话
+							$('#realNameAndTelNum').empty().append('<span class="h4"><b>申请人：</b>'+data.tk_name+'&nbsp;&nbsp;&nbsp;&nbsp;</span>')
+							.append('<span class="h4"><b>联系电话：</b>'+data.tk_telNum+'</span>');
+							//缩略图的图片
+							$('#smallPicShowBox').empty();
+							for(var i = 0 ; i < data.tk_data.length ; i++){
+								$('#smallPicShowBox').append('<div id="'+data.tk_data[i].name+'">'
+																+'<div class="caption">'
+																	+'<h4>'+data.tk_data[i].label+'</h4>'
+																+'</div>'
+																+'<a href="javascript:void(0);" class="thumbnail">'
+																	+'<img src="'+data.tk_data[i].value+'" alt="'+data.tk_data[i].label+'">'
+																+'</a>'  
+															+'</div>');
+								//为缩略图a标签添加点击事件
+								$('#'+data.tk_data[i].name+' a').on('click',function(){
+									//获取点击图片并放入大图框中
+									$('#bigPicShowBox').empty().append($(this).parent().html());
+								});
+							}
+							//大窗体中的提示语
+							$('#bigPicShowBox').empty().append('<p class="h2" style="margin-top: 160px;">点击左侧小图放大</p>');
+							//通过图标可用并把单号id给两个处理按钮
+							$('#trialThroughBtn').prop({disabled:false}).data('tk_id',data.tk_id);
+							
+							$('#trialRefuseBtn').prop({disabled:false}).data('tk_id',data.tk_id);
+							//再显示模态窗
+							$('#trialInfoModal').modal('show');
+						});
+					}else{
+						$('#'+params[i].tk_id).append('<td><a href="javascript:void(0);">查看<a></td>');
+						$('#'+params[i].tk_id+' td a').data('param',params[i]).on('click',function(){
+							var data = $(this).data('param');
+							//先用数据生成模态窗的内容
+							//页头的姓名和联系电话
+							$('#realNameAndTelNum').empty().append('<span class="h4"><b>申请人：</b>'+data.tk_name+'&nbsp;&nbsp;&nbsp;&nbsp;</span>')
+							.append('<span class="h4"><b>联系电话：</b>'+data.tk_telNum+'&nbsp;&nbsp;&nbsp;&nbsp;</span>')
+							.append('<span class="h4"><b>当前状态：</b>'+data.status+'</span>');
+							//缩略图的图片
+							$('#smallPicShowBox').empty();
+							for(var i = 0 ; i < data.tk_data.length ; i++){
+								$('#smallPicShowBox').append('<div id="'+data.tk_data[i].name+'">'
+																+'<div class="caption">'
+																	+'<h4>'+data.tk_data[i].label+'</h4>'
+																+'</div>'
+																+'<a href="javascript:void(0);" class="thumbnail">'
+																	+'<img src="'+data.tk_data[i].value+'" alt="'+data.tk_data[i].label+'">'
+																+'</a>'  
+															+'</div>');
+								//为缩略图a标签添加点击事件
+								$('#'+data.tk_data[i].name+' a').on('click',function(){
+									//获取点击图片并放入大图框中
+									$('#bigPicShowBox').empty().append($(this).parent().html());
+								});
+							}
+							//大窗体中的提示语
+							$('#bigPicShowBox').empty().append('<p class="h2" style="margin-top: 160px;">点击左侧小图放大</p>');
+							//通过图标不可用
+							$('#trialThroughBtn').prop({disabled:true});
+							$('#trialRefuseBtn').prop({disabled:true});
+							//再显示模态窗
+							$('#trialInfoModal').modal('show');
+						});
+					}
+				}
+			},
+			error:function(){
+				alert('载入申请数据失败，与服务器失去联系，请检查您的网络连接');
+			}
+		});
+	});
+	//不通过按钮点击事件
+	$('#trialRefuseBtn').click(function(){
+		//隐藏modal窗体
+		$('#trialInfoModal').modal('hide');
+		//获取工单id，然后与服务器交互，结果用alert显示
+		//alert($(this).data('tk_id'));
+		$('#editReasonModal').modal('show').data('tk_id',$(this).data('tk_id'))
+		//alert('单号为：'+$(this).data('tk_id')+'的申请审核不通过，已短信通知申请人。');
+	});
+	//编辑原因的窗口如果被关闭的话不会修改tk状态，而是重新打开审核窗口
+	$('#closeEditReasonModalBtn').click(function(){
+		$('#editReasonModal').modal('hide');
+		$('#trialInfoModal').modal('show');
+	});
+	//编辑原因的窗口如果被关闭的话不会修改tk状态，而是重新打开审核窗口
+	$('#closeEditReasonModal').click(function(){
+		$('#editReasonModal').modal('hide');
+		$('#trialInfoModal').modal('show');
+	});
+	//编辑原因的窗口点击确认
+	$('#confirmEditReasonModalBtn').click(function(){
+		var text = $('#reasonTextarea').val();	
+		var tk_id = $('#editReasonModal').data('tk_id')
+
+		//关闭模态窗
+		$('#editReasonModal').modal('hide');
+		//编写提交事件
+		$.ajax({
+			type:'POST',
+			url:'main/recieveRefuseReason.api',
+			data:{
+				text:text,
+				tk_id:tk_id
+			},
+			success:function(data){
+				alert(data)
+				$('#mainPan').empty().load('main/getAllApply.api');
+			},
+			error:function(data){
+				alert('与服务器失去联系，请检查您的网络')
+			}
+		});
+
+	});
+	//通过按钮点击事件
+	$('#trialThroughBtn').click(function(){
+		//隐藏modal窗体
+		$('#trialInfoModal').modal('hide');
+		//获取工单id，然后与服务器交互，结果用alert显示
+		//alert($(this).data('tk_id'));
+		$.ajax({
+			type:'POST',
+			url:'main/throughPretrial.api',
+			data:{
+				tk_id:$(this).data('tk_id')
+			},
+			success:function(data){
+				alert(data)
+				//刷新页面
+				$('#mainPan').empty().load('main/getAllApply.api');
+			},error:function(data){
+				alert('与服务器失去联系，请检查您的网络')
+			}
+		});
+		
+	});
+	</script>	
+</html>	

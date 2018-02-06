@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="eastrobot.robotdev.ticketsystem.dao.PollReplyDao">
+	<resultMap id="BaseResultMap"
+		type="eastrobot.robotdev.ticketsystem.model.PollReply">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="survey_id" property="surveyId" jdbcType="INTEGER" />
+		<result column="survey_title" property="surveyTitle" jdbcType="VARCHAR" />
+		<result column="topic_id" property="topicId" jdbcType="INTEGER" />
+		<result column="topic_title" property="topicTitle" jdbcType="VARCHAR" />
+		<result column="topic_seq" property="topicSeq" jdbcType="INTEGER" />
+		<result column="topic_type" property="topicType" jdbcType="INTEGER" />
+		<result column="option_id" property="optionId" jdbcType="INTEGER" />
+		<result column="option_content" property="optionContent" jdbcType="VARCHAR" />
+		<result column="option_seq" property="optionSeq" jdbcType="INTEGER" />
+		<result column="user_id" property="userId" jdbcType="VARCHAR" />
+		<result column="content" property="content" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+
+	<resultMap id="DbReturnTopic" type="eastrobot.robotdev.ticketsystem.model.vo.DbReturnTopic">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="sqence" property="sqence" jdbcType="INTEGER" />
+		<result column="topicSum" property="topicSum" jdbcType="BIGINT" />
+		<result column="topicType" property="topicType" jdbcType="INTEGER" />
+	</resultMap>
+
+	<resultMap id="DbReturnOption" type="eastrobot.robotdev.ticketsystem.model.vo.DbReturnOption">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="optionId" property="optionId" jdbcType="INTEGER" />
+		<result column="optionContent" property="optionContent" jdbcType="VARCHAR" />
+		<result column="countOption" property="countOption" jdbcType="BIGINT" />
+		<result column="content" property="content" jdbcType="VARCHAR" />
+		<result column="sequence" property="sequence" jdbcType="INTEGER" />
+		<result column="topicType" property="topicType" jdbcType="INTEGER" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id, survey_id, survey_title, topic_id, topic_title, topic_seq,
+		topic_type, option_id,
+		option_content, option_seq, user_id, content, create_time
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from poll_reply
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from poll_reply
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="eastrobot.robotdev.ticketsystem.model.PollReply">
+		insert into poll_reply (id, survey_id, survey_title,
+		topic_id, topic_title, topic_seq,
+		topic_type, option_id, option_content,
+		option_seq, user_id, content,
+		create_time)
+		values (#{id,jdbcType=INTEGER}, #{surveyId,jdbcType=INTEGER},
+		#{surveyTitle,jdbcType=VARCHAR},
+		#{topicId,jdbcType=INTEGER}, #{topicTitle,jdbcType=VARCHAR}, #{topicSeq,jdbcType=INTEGER},
+		#{topicType,jdbcType=INTEGER}, #{optionId,jdbcType=INTEGER},
+		#{optionContent,jdbcType=VARCHAR},
+		#{optionSeq,jdbcType=INTEGER}, #{userId,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR},
+		#{createTime,jdbcType=TIMESTAMP})
+	</insert>
+	<insert id="insertSelective" parameterType="eastrobot.robotdev.ticketsystem.model.PollReply">
+		insert into poll_reply
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="surveyId != null">
+				survey_id,
+			</if>
+			<if test="surveyTitle != null">
+				survey_title,
+			</if>
+			<if test="topicId != null">
+				topic_id,
+			</if>
+			<if test="topicTitle != null">
+				topic_title,
+			</if>
+			<if test="topicSeq != null">
+				topic_seq,
+			</if>
+			<if test="topicType != null">
+				topic_type,
+			</if>
+			<if test="optionId != null">
+				option_id,
+			</if>
+			<if test="optionContent != null">
+				option_content,
+			</if>
+			<if test="optionSeq != null">
+				option_seq,
+			</if>
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="content != null">
+				content,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="surveyId != null">
+				#{surveyId,jdbcType=INTEGER},
+			</if>
+			<if test="surveyTitle != null">
+				#{surveyTitle,jdbcType=VARCHAR},
+			</if>
+			<if test="topicId != null">
+				#{topicId,jdbcType=INTEGER},
+			</if>
+			<if test="topicTitle != null">
+				#{topicTitle,jdbcType=VARCHAR},
+			</if>
+			<if test="topicSeq != null">
+				#{topicSeq,jdbcType=INTEGER},
+			</if>
+			<if test="topicType != null">
+				#{topicType,jdbcType=INTEGER},
+			</if>
+			<if test="optionId != null">
+				#{optionId,jdbcType=INTEGER},
+			</if>
+			<if test="optionContent != null">
+				#{optionContent,jdbcType=VARCHAR},
+			</if>
+			<if test="optionSeq != null">
+				#{optionSeq,jdbcType=INTEGER},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=VARCHAR},
+			</if>
+			<if test="content != null">
+				#{content,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="eastrobot.robotdev.ticketsystem.model.PollReply">
+		update poll_reply
+		<set>
+			<if test="surveyId != null">
+				survey_id = #{surveyId,jdbcType=INTEGER},
+			</if>
+			<if test="surveyTitle != null">
+				survey_title = #{surveyTitle,jdbcType=VARCHAR},
+			</if>
+			<if test="topicId != null">
+				topic_id = #{topicId,jdbcType=INTEGER},
+			</if>
+			<if test="topicTitle != null">
+				topic_title = #{topicTitle,jdbcType=VARCHAR},
+			</if>
+			<if test="topicSeq != null">
+				topic_seq = #{topicSeq,jdbcType=INTEGER},
+			</if>
+			<if test="topicType != null">
+				topic_type = #{topicType,jdbcType=INTEGER},
+			</if>
+			<if test="optionId != null">
+				option_id = #{optionId,jdbcType=INTEGER},
+			</if>
+			<if test="optionContent != null">
+				option_content = #{optionContent,jdbcType=VARCHAR},
+			</if>
+			<if test="optionSeq != null">
+				option_seq = #{optionSeq,jdbcType=INTEGER},
+			</if>
+			<if test="userId != null">
+				user_id = #{userId,jdbcType=VARCHAR},
+			</if>
+			<if test="content != null">
+				content = #{content,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="eastrobot.robotdev.ticketsystem.model.PollReply">
+		update poll_reply
+		set survey_id = #{surveyId,jdbcType=INTEGER},
+		survey_title = #{surveyTitle,jdbcType=VARCHAR},
+		topic_id = #{topicId,jdbcType=INTEGER},
+		topic_title = #{topicTitle,jdbcType=VARCHAR},
+		topic_seq = #{topicSeq,jdbcType=INTEGER},
+		topic_type = #{topicType,jdbcType=INTEGER},
+		option_id = #{optionId,jdbcType=INTEGER},
+		option_content = #{optionContent,jdbcType=VARCHAR},
+		option_seq = #{optionSeq,jdbcType=INTEGER},
+		user_id = #{userId,jdbcType=VARCHAR},
+		content = #{content,jdbcType=VARCHAR},
+		create_time = #{createTime,jdbcType=TIMESTAMP}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+
+	<select id="findDbReturnTopicByTopicId" resultMap="DbReturnTopic" parameterType="java.lang.Integer">
+		SELECT TOPIC_ID AS id,topic_title AS title, topic_seq AS sqence,count(1) AS topicSum,topic_type AS topicType FROM poll_reply WHERE survey_id=#{topicId} GROUP BY topic_title,TOPIC_ID,topic_type,topic_seq ORDER BY topic_seq ASC
+	</select>
+	
+	<select id="findDbReturnOptionByTopicId" resultMap="DbReturnOption" parameterType="java.lang.Integer">
+		SELECT TOPIC_ID AS id,option_id AS optionId,option_content AS optionContent,count(1) AS countOption,content AS content,option_seq AS sequence,topic_type AS topicType
+		FROM poll_reply
+		WHERE survey_id=#{topicId} and topic_type in(0,1) GROUP BY optionId,optionContent, topicType, content,option_seq,TOPIC_ID
+		union all
+		SELECT TOPIC_ID AS id,option_id AS optionId,option_content AS optionContent,0 AS countOptionn, content AS content,option_seq AS sequence,topic_type AS topicType 
+		FROM poll_reply 
+		WHERE survey_id=#{topicId} and topic_type = 2
+	</select>
+	
+	<delete id="deletePollReplyBySurveyId" parameterType="java.lang.Integer">
+		delete from poll_reply
+		where survey_id = #{surveyId}
+	</delete>
+
+	<select id="findDbReturnTopicAllByTopicId" resultMap="DbReturnTopic" parameterType="java.lang.Integer">
+		SELECT id AS id,title AS title,type AS topicType FROM poll_topic where survey_id=#{topicId}  order by seq
+	</select>
+
+	<select id="findDbReturnOptionAllByTopicId" resultMap="DbReturnOption" parameterType="java.lang.Integer">
+		select tab1.topic_id AS id,tab1.id AS optionId,tab1.content AS content, tab1.seq AS sequence,tab2.type AS topicType
+		from poll_options tab1,poll_topic tab2
+		where tab1.topic_id=tab2.id and tab2.survey_id=#{topicId} and tab2.type in(0,1) ORDER BY tab1.id,tab1.seq
+	</select>
+</mapper>

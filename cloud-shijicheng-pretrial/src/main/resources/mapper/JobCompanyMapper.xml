@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="eastrobot.robotdev.ticketsystem.dao.JobCompanyMapper">
+  <resultMap id="BaseResultMap" type="eastrobot.robotdev.ticketsystem.model.JobCompany">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="company_name" jdbcType="VARCHAR" property="companyName" />
+    <result column="company_nature" jdbcType="INTEGER" property="companyNature" />
+    <result column="business_license" jdbcType="VARCHAR" property="businessLicense" />
+    <result column="organization_code" jdbcType="VARCHAR" property="organizationCode" />
+    <result column="economy_type" jdbcType="INTEGER" property="economyType" />
+    <result column="industry" jdbcType="VARCHAR" property="industry" />
+    <result column="representative" jdbcType="VARCHAR" property="representative" />
+    <result column="post_code" jdbcType="VARCHAR" property="postCode" />
+    <result column="expire_date" jdbcType="DATE" property="expireDate" />
+    <result column="recruitment" jdbcType="INTEGER" property="recruitment" />
+    <result column="company_province" jdbcType="INTEGER" property="companyProvince" />
+    <result column="company_city" jdbcType="INTEGER" property="companyCity" />
+    <result column="company_area" jdbcType="INTEGER" property="companyArea" />
+    <result column="company_community" jdbcType="INTEGER" property="companyCommunity" />
+    <result column="company_address" jdbcType="VARCHAR" property="companyAddress" />
+    <result column="contact_name" jdbcType="VARCHAR" property="contanctName" />
+    <result column="contact_tel" jdbcType="VARCHAR" property="contanctTel" />
+    <result column="contact_email" jdbcType="VARCHAR" property="contanctEmail" />
+    <result column="company_tel" jdbcType="VARCHAR" property="companyTel" />
+    <result column="employment_form" jdbcType="INTEGER" property="employmentForm" />
+    <result column="probation_period" jdbcType="VARCHAR" property="probationPeriod" />
+    <result column="household_require" jdbcType="INTEGER" property="householdRequire" />
+    <result column="accommodation" jdbcType="INTEGER" property="accommodation" />
+    <result column="social_security" jdbcType="INTEGER" property="socialSecurity" />
+    <result column="job_fair" jdbcType="INTEGER" property="jobFair" />
+    <result column="work_address" jdbcType="VARCHAR" property="workAddress" />
+    <result column="benefit_desc" jdbcType="VARCHAR" property="benefitDesc" />
+    <result column="job_no" jdbcType="VARCHAR" property="jobNo" />
+    <result column="employment_mode" jdbcType="INTEGER" property="employmentMode" />
+    <result column="create_date" jdbcType="DATE" property="createTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, company_name, company_nature, business_license, organization_code, economy_type, 
+    industry, representative, post_code, expire_date, recruitment, company_province, 
+    company_city, company_area, company_community, company_address, contact_name, contact_tel, 
+    contact_email, company_tel, employment_form, probation_period, household_require, 
+    accommodation, social_security, job_fair, work_address, benefit_desc, job_no, employment_mode, 
+    create_date
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from job_company
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="getAllCompJob" parameterType="java.util.Map" resultType="java.util.Map">
+SELECT
+	jc.id AS jID,
+	jc.company_name AS companyName,
+	jc.contact_name AS contactName,
+	jc.contact_tel AS contactPhone,
+	CONCAT(jc.create_date,'至',jc.expire_date) AS recruitTime,
+	jc.create_date AS createTime
+FROM
+	job_company jc
+ORDER BY jc.create_date DESC
+  </select>
+  
+<select id="getCompDetailById" parameterType="java.lang.Integer" resultType="java.util.Map">
+SELECT
+	DATE_FORMAT(jc.create_date,'%Y年%m月%d日') AS registerDate,
+	DATE_FORMAT(jc.expire_date,'%Y年%m月%d日') AS expireDate,
+	jc.job_no AS jobNo,
+	jc.company_name AS compName,
+	compDicNat.dic_comp_nature AS compNature,
+	econDicType.dic_econ_type AS econType,
+	jc.industry AS industry,
+	jc.representative AS representative,
+	jc.organization_code AS organizeCode,
+	recruDic.dic_recru AS recruType,
+	jc.post_code AS postCode,
+	jc.business_license AS busiLicense,
+	CONCAT(
+		compProArea.comp_province_area,
+		compCityArea.comp_city_area,
+		compAreaArea.comp_area_area,
+		compCommArea.comp_comm_area
+	) AS compPartOfAddr,
+	jc.company_address AS compDetailAddr,
+	jc.contact_name AS contactName,
+	jc.contact_tel AS contactTel,
+	jc.contact_email AS contactEmail,
+	jc.company_tel AS compTel,
+	empDicForm.dic_emp_form AS employForm,
+	empDicMode.dic_emp_mode AS employMode,
+	houseDicReq.dic_house_req AS houseRequire,
+	probationPeriodDic.probation_period AS probationPeriod,
+	accomDic.dic_accom AS accommodation,
+	sociaDicSec.dic_social_sec AS socialSecur,
+	jobDicFair.dic_job_fair AS jobFair,
+	jc.work_address AS workAddr,
+	jc.benefit_desc AS benefitDesc
+FROM
+	job_company jc
+LEFT JOIN (
+	SELECT
+		dd.id AS dId,
+		dd.dic_name AS dic_comp_nature
+	FROM
+		data_dictionary dd
+) compDicNat ON compDicNat.dId = jc.company_nature
+LEFT JOIN (
+	SELECT
+		dd.id AS dId,
+		dd.dic_name AS dic_econ_type
+	FROM
+		data_dictionary dd
+) econDicType ON econDicType.dId = jc.economy_type
+LEFT JOIN (
+	SELECT
+		dd.id AS dId,
+		dd.dic_name AS dic_recru
+	FROM
+		data_dictionary dd
+) recruDic ON recruDic.dId = jc.recruitment
+LEFT JOIN (
+	SELECT
+		a.ID AS aId,
+		a.AREA_NAME AS comp_province_area
+	FROM
+		area a
+) compProArea ON compProArea.aId = jc.company_province
+LEFT JOIN (
+	SELECT
+		a.ID AS aId,
+		a.AREA_NAME AS comp_city_area
+	FROM
+		area a
+) compCityArea ON compCityArea.aId = jc.company_city
+LEFT JOIN (
+	SELECT
+		a.ID AS aId,
+		a.AREA_NAME AS comp_area_area
+	FROM
+		area a
+) compAreaArea ON compAreaArea.aId = jc.company_area
+LEFT JOIN (
+	SELECT
+		a.ID AS aId,
+		a.AREA_NAME AS comp_comm_area
+	FROM
+		area a
+) compCommArea ON compCommArea.aId = jc.company_community
+LEFT JOIN (
+	SELECT
+		dd.id AS dId,
+		dd.dic_name AS dic_emp_form
+	FROM
+		data_dictionary dd
+) empDicForm ON empDicForm.dId = jc.employment_form
+LEFT JOIN (
+	SELECT
+		dd.id AS dId,
+		dd.dic_name AS dic_emp_mode
+	FROM
+		data_dictionary dd
+) empDicMode ON empDicMode.dId = jc.employment_mode
+LEFT JOIN (
+	SELECT
+		dd.id AS dId,
+		dd.dic_name AS dic_house_req
+	FROM
+		data_dictionary dd
+) houseDicReq ON houseDicReq.dId = jc.household_require
+LEFT JOIN (
+	SELECT
+		dd.id AS dId,
+		dd.dic_name AS dic_accom
+	FROM
+		data_dictionary dd
+) accomDic ON accomDic.dId = jc.accommodation
+LEFT JOIN (
+	SELECT
+		dd.id AS dId,
+		dd.dic_name AS dic_social_sec
+	FROM
+		data_dictionary dd
+) sociaDicSec ON sociaDicSec.dId = jc.social_security
+LEFT JOIN (
+	SELECT
+		dd.id AS dId,
+		dd.dic_name AS dic_job_fair
+	FROM
+		data_dictionary dd
+) jobDicFair ON jobDicFair.dId = jc.job_fair
+LEFT JOIN (
+	SELECT
+		dd.id AS dId,
+		dd.dic_name AS probation_period
+	FROM
+		data_dictionary dd
+) probationPeriodDic ON probationPeriodDic.dId = jc.probation_period
+WHERE 1=1
+AND jc.id= #{jobId,jdbcType=INTEGER}
+  </select>
+</mapper>

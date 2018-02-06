@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="eastrobot.robotdev.ticketsystem.dao.Bk_RoleDao">
+	<insert id="insert" parameterType="Bk_Role" keyProperty="id">
+		insert into bk_role 
+			(id,name,permission,description) 
+		values 
+			(#{id},#{name},#{permission},#{description})
+	</insert>
+	
+	<delete id="delete" parameterType="String">
+		delete from bk_role where id=#{id}
+	</delete>
+	
+	<update id="update" parameterType="Bk_Role">
+		update bk_role set name=#{name},permission=#{permission},description=#{description} where id=#{id}
+	</update>
+	
+	<select id="select" parameterType="String" resultType="Bk_Role">
+		select * from bk_role where id=#{id}
+	</select>
+	
+	<select id="selectByName" parameterType="String" resultType="Bk_Role">
+		select * from bk_role where name=#{name}
+	</select>
+	
+	<select id="selectAll" resultType="Bk_Role">
+		select * from bk_role;
+	</select>
+</mapper>

@@ -1,0 +1,353 @@
+<!DOCTYPE html >
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	</head>
+	<body>		
+		<div class="row">
+			<ol class="breadcrumb col-xs-12 col-md-12 col-lg-12">
+  				<li><a href="main">主页</a></li>
+  				<li><a href="#">用户设置</a></li>
+  				<li class="active">添加/删除用户</li>
+			</ol>
+		</div>
+
+		<div class="row" style="margin-top: 40px;">
+			<div class="col-sm-10 col-sm-offset-1 form-box">
+				<!-- 修改密码div -->
+				<div class="login-panel panel panel-warning">
+					<div class="panel-heading"><strong>添加/删除用户</strong></div>
+					
+					<div class="panel-body">
+						<!-- 用户表 -->
+						<div class="bootstrap-table">
+							<div class="fixed-table-container">
+								<div class="fixed-table-header">
+									<table></table>
+								</div>
+								<div class="fixed-table-body">
+									<table class="table table-hover">
+										<thead>
+											<tr>
+												<th>用户名</th>
+												<th>角色</th>
+												<th>状态</th>
+												<th>操作</th>
+											</tr>
+										</thead>
+										<tbody id="allUsersTable">
+											<!-- 表数据体 -->											
+										</tbody>
+									</table>
+								</div>
+								<div class="fixed-table-pagination">
+									<div class="pull-right pagination">
+										<div class="btn btn-primary" id="addNewUserBtn">添加新用户</div>
+									</div>
+								</div>
+							</div>
+							
+						</div>
+					</div>
+			
+				</div>
+			</div>
+		</div>
+		<!-- model -->
+		<div class="modal fade" id="confirmDeleteUser" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+		  	<div class="modal-dialog">
+		    	<div class="modal-content">
+		      		<div class="modal-header">
+		        		<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">取消</span></button>
+		        		<h4 class="modal-title">删除用户</h4>
+		      		</div>
+		      		<div class="modal-body">
+		        		<p>您是否确认删除该用户？（该操作执行后将不能撤销！）</p>
+		      		</div>
+		      		<div class="modal-footer">
+		        		<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+		        		<button type="button" class="btn btn-primary" id="comfirmDeleteUserBtn">确认</button>
+		      		</div>
+		    	</div><!-- /.modal-content -->
+		  	</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+		
+		<!-- model -->
+		<div class="modal fade" id="confirmChangeUserStatus" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+		  	<div class="modal-dialog">
+		    	<div class="modal-content">
+		      		<div class="modal-header">
+		        		<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">取消</span></button>
+		        		<h4 class="modal-title">修改用户状态</h4>
+		      		</div>
+		      		<div class="modal-body">
+		        		<p>您是否确认修改该用户的账户状态？</p>
+		      		</div>
+		      		<div class="modal-footer">
+		        		<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+		        		<button type="button" class="btn btn-primary" id="confirmChangeUserStatusBtn">确认</button>
+		      		</div>
+		    	</div><!-- /.modal-content -->
+		  	</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+		
+		<!-- model -->
+		<div class="modal fade" id="changeUserPassword" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+		  	<div class="modal-dialog">
+		    	<div class="modal-content">
+		      		<div class="modal-header">
+		        		<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">取消</span></button>
+		        		<h4 class="modal-title">修改用户密码</h4>
+		      		</div>
+		      		<div class="modal-body">
+		      			<p>使用管理员权限修改密码(不需要填写原密码，请慎用)</p>
+						<form role="form">
+							<fieldset>
+								<div class="form-group">
+									<label for="">新密码</label>
+									<input class="form-control" placeholder="" id="new_password" type="password" value="" data-container="body" data-toggle="popover" data-placement="right" data-content="密码最少需要5个字符">
+								</div>
+								<div class="form-group">
+									<label for="">确认密码</label>
+									<input class="form-control" placeholder="" id="verify_password" type="password" value="" data-container="body" data-toggle="popover" data-placement="right" data-content="两次输入的密码不一致">
+								</div>
+							</fieldset>
+						</form>
+		      		</div>
+		      		<div class="modal-footer">
+		        		<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+		        		<button type="button" class="btn btn-primary" id="changeUserPasswordBtn">确认</button>
+		      		</div>
+		    	</div><!-- /.modal-content -->
+		  	</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+		
+		<!-- model -->
+		<div class="modal fade" id="addNewUser" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+		  	<div class="modal-dialog">
+		    	<div class="modal-content">
+		      		<div class="modal-header">
+		        		<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">取消</span></button>
+		        		<h4 class="modal-title">添加新用户</h4>
+		      		</div>
+		      		<div class="modal-body">
+		      			<p>添加一个新用户并为其设置初始密码</p>
+						<form role="form">
+							<fieldset>
+								<div class="form-group">
+									<label for="">用户名</label>
+									<input class="form-control" placeholder="" id="add_username" type="text" value="" data-container="body" data-toggle="popover" data-placement="right" data-content="用户名最少需要5个字符">
+								</div>
+								<div class="form-group">
+									<label for="">设置初始密码</label>
+									<input class="form-control" placeholder="" id="add_new_password" type="password" value="" data-container="body" data-toggle="popover" data-placement="right" data-content="密码最少需要5个字符">
+								</div>
+								<div class="form-group">
+									<label for="">确认初始密码</label>
+									<input class="form-control" placeholder="" id="add_verify_password" type="password" value="" data-container="body" data-toggle="popover" data-placement="right" data-content="两次输入的密码不一致">
+								</div>
+							</fieldset>
+						</form>
+		      		</div>
+		      		<div class="modal-footer">
+		        		<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+		        		<button type="button" class="btn btn-primary" id="submitNewUserInfoBtn">确认</button>
+		      		</div>
+		    	</div><!-- /.modal-content -->
+		  	</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+		<script type="text/javascript">
+		$(document).ready(function(){
+			//载入页面的时候请求
+			$.ajax({
+				type:'POST',
+				url:'main/getAllUsers.api',
+				success:function(data){
+					var params = JSON.parse(data);
+					for(var i = 0 ; i < params.length ; i++ ){
+						var status = null;
+						if(params[i].status == 1)
+							status = "正常";
+						else
+							status = "锁定";
+						$('#allUsersTable').append('<tr></tr>');
+						$('#allUsersTable tr:last-child').append('<td>'+params[i].username+'</td>')
+						.append('<td>'+params[i].role+'</td>')//.append('<td><input style="width:99%;border:none;" type="text"/></td>')
+						.append('<td>'+status+'</td>')
+						.append('<td id="operate_'+params[i].username+'"></td>');
+						$('#operate_'+params[i].username).append('<a href="javascript:void(0);">删除用户</a>&nbsp;&nbsp;')
+						.append('<a href="javascript:void(0);">修改密码</a>&nbsp;&nbsp;')
+						.append('<a href="javascript:void(0);">修改状态</a>');
+						
+						$('#operate_'+params[i].username+' a:contains("删除用户")').on('click',function(){
+							$('#confirmDeleteUser').modal('show').data("username",$(this).parent().attr('id').substring(8));
+							
+						});
+						$('#operate_'+params[i].username+' a:contains("修改密码")').on('click',function(){
+							//弹出模态框之前清空模态框内容
+							$("#changeUserPassword").find("input[type='password']").each(function(){
+								var _this = $(this);
+								_this.val("");
+							});
+							$('#changeUserPassword').modal('show').data("username",$(this).parent().attr('id').substring(8));
+						});
+						$('#operate_'+params[i].username+' a:contains("修改状态")').on('click',function(){
+							$('#confirmChangeUserStatus').modal('show').data("username",$(this).parent().attr('id').substring(8));
+						});	
+					}
+				}
+			});
+			//修改密码模态框关闭时隐藏所有的popover
+			$("#changeUserPassword").on("hidden.bs.modal", function(){
+				$("[data-toggle='popover']").popover("hide");
+			});
+			//新增用户模态框关闭时隐藏所有的popover
+			$("#addNewUser").on("hidden.bs.modal", function(){
+				$("[data-toggle='popover']").popover("hide");
+			});
+		});
+		//确认删除用户
+		$('#comfirmDeleteUserBtn').click(function(){
+			//确认之后隐藏模态窗
+			$('#confirmDeleteUser').modal('hide');
+			//后台ajax删除用户
+			var username = $('#confirmDeleteUser').data('username');
+			$.ajax({
+				type:'POST',
+				url:'main/deleteUser.api',
+				data:{
+					username : username
+				},
+				success:function(data){
+					var json = JSON.parse(data)
+					if(json.type == "success"){
+						alert('删除成功');
+						$('#mainPan').empty().load('main/u_addDeleteUser.api');
+					}
+					else
+						alert('删除失败');
+				},
+				error:function(){
+					alert('删除失败，与服务器失去连接，请检查您的网络');
+				}
+			})
+		});
+		//确认修改用户状态
+		$('#confirmChangeUserStatusBtn').click(function(){
+			$('#confirmChangeUserStatus').modal('hide');
+			var username = $('#confirmChangeUserStatus').data('username');
+			$.ajax({
+				type:'POST',
+				url:'main/changeUserStatus.api',
+				data:{
+					username : username
+				},
+				success:function(data){
+					var json = JSON.parse(data)
+					if(json.type == "success"){
+						alert('修改用户状态成功');
+						$('#mainPan').empty().load('main/u_addDeleteUser.api');
+					}
+					else
+						alert('修改用户状态失败');
+				},
+				error:function(){
+					alert('修改用户状态失败，与服务器失去连接，请检查您的网络');
+				}
+			})
+		});
+		//确认修改用户密码
+		$('#changeUserPasswordBtn').click(function(){
+			var username = $('#changeUserPassword').data('username');
+			//表单验证
+			var new_password = $('#new_password').val();
+			var verify_password = $('#verify_password').val();
+			if(new_password.length < 5 || verify_password.length < 5){
+				$('#new_password').popover('show');
+				setTimeout("$('#new_password').popover('hide');",1200);//延时1.2秒
+				return;
+			}
+			if(new_password != verify_password){
+				$('#verify_password').popover('show');
+				setTimeout("$('#verify_password').popover('hide');",1200);//延时1.2秒
+				return;
+			}
+			//通过表单验证	
+			$('#changeUserPassword').modal('hide');
+			//ajax
+			$.ajax({
+				type:'POST',
+				url:'main/changePasswordWithoutOriginPassword.api',
+				data:{
+					username : username,
+					new_password : new_password,
+					verify_password : verify_password
+				},
+				success:function(data){
+					var json = JSON.parse(data)
+					if(json.type == "success")
+						alert('修改用户密码成功');
+					else
+						alert('修改用户密码失败');
+				},				
+				error:function(){
+					alert('修改用户密码失败，与服务器失去连接，请检查您的网络');
+				}
+			});
+		});
+		//添加新用户
+		$('#addNewUserBtn').click(function(){
+			//弹出模态框之前清空模态框内容
+			$("#addNewUser").find("input").each(function(){
+				var _this = $(this);
+				_this.val("");
+			});
+			$('#addNewUser').modal('show');
+		});
+		$('#submitNewUserInfoBtn').click(function(){
+			var username = $('#add_username').val();
+			var new_password = $('#add_new_password').val();
+			var verify_password = $('#add_verify_password').val();
+			//表单验证
+			if(username.length < 5){
+				$('#add_username').popover('show');
+				setTimeout("$('#add_username').popover('hide');",1200);//延时1.2秒
+				return;
+			}
+			if(new_password.length < 5 || verify_password.length < 5){
+				$('#add_new_password').popover('show');
+				setTimeout("$('#add_new_password').popover('hide');",1200);//延时1.2秒
+				return;
+			}
+			if(new_password != verify_password){
+				$('#add_verify_password').popover('show');
+				setTimeout("$('#add_verify_password').popover('hide');",1200);//延时1.2秒
+				return;
+			}
+			//通过表单验证
+			$('#addNewUser').modal('hide');
+			$.ajax({
+				type:'POST',
+				url:'main/addNewUser.api',
+				data:{
+					username : username,
+					new_password : new_password,
+					verify_password : verify_password
+				},
+				success:function(data){
+					var json = JSON.parse(data)
+					if(json.type == "success"){
+						alert('添加新用户成功');
+						$('#mainPan').empty().load('main/u_addDeleteUser.api');
+					}
+					else
+						alert('添加新用户失败');
+				},
+				error:function(){
+					alert('添加新用户失败，与服务器失去连接，请检查您的网络');
+				}
+			});
+		});
+		</script>
+	</body>
+</html>

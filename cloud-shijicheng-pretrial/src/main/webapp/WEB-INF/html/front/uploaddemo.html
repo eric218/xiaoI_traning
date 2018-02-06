@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <title>UploadDemo</title>
+
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	
+    <!-- CSS -->
+    <!-- <link rel="stylesheet" href="http://fonts.useso.com/css?family=Roboto:400,100,300,500"> -->
+    <link rel="stylesheet" href="resource/assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="resource/assets/font-awesome/css/font-awesome.min.css">
+
+
+    <style type="text/css">
+    body {
+		background: #f1f4f7;
+		color: #5f6468;
+	}
+    </style>
+  </head>
+  
+  <body>
+	
+    <div class="container">
+    	
+    	<div class="form-group" id="id_pic"></div>
+    	
+    	
+    	<div class="form-group" id="person_pic"></div>		
+    </div>
+
+
+    <!-- js -->
+    <script src="resource/assets/js/jquery-1.11.1.min.js"></script>
+    <script src="resource/assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="resource/assets/localResizeIMG/lrz.bundle.js"></script>
+    <script src="resource/assets/js/uploader.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function(){
+    	//第一个参数是上传框的div id
+    	//第二个参数是label的文本
+    	//第三个参数是压缩质量
+    	//第四个参数是预览区域的最大高宽的比，宽度由容器宽度决定，高度由高宽比决定
+    	//第五个参数服务器后端接口
+    	//第六个参数是图片类别，例如身份证就传id_pic，个人照片就传person_pic，后端接收参数picClassify，可以判断图片是做什么用的
+    	$.initUploader('#id_pic','身份证或户口本照片（小于2M）&nbsp;*', 0.1 , 1, 'upload.api','id_pic');
+    	//默认参数后端用来接收MultipartFile的value=UploadPic
+    	$.initUploader('#person_pic','个人照片（小于2M）&nbsp;*', 0.1 , 1, 'upload.api','person_pic');
+    });
+    </script>
+    <script type="text/javascript">    	
+    </script>
+
+  </body>
+</html>

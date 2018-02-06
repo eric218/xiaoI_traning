@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="eastrobot.robotdev.ticketsystem.dao.NotifyMapper" >
+  
+ <select id="getAllNotify" resultType="java.util.Map" parameterType="java.util.Map">
+SELECT
+	n.form_no AS formNo,
+	n.proposer_name AS proposerName,
+	n.propose_phone AS proposerPhone,
+	d.dic_form_type AS formType,
+	n.create_time AS createTime,
+	n.approval_status AS apprStatus,
+	dt.dic_marital_status AS maritalStatus,
+	n.approval_time AS apprTime
+FROM
+	notify n
+LEFT JOIN (
+	SELECT dd.id AS dId,dd.dic_name AS dic_form_type FROM data_dictionary dd
+) d ON d.dId=n.form_type
+LEFT JOIN (
+	SELECT dd.id AS dId,dd.dic_code AS dic_marital_status FROM data_dictionary dd
+) dt ON dt.dId=n.propose_marital_status
+WHERE 1=1
+	<if test="formType!=null">
+	AND n.form_type = #{formType,jdbcType=INTEGER}
+	</if>
+	<if test="formType == null">
+	AND (n.form_type = 4 OR n.form_type = 5)
+	</if>
+	<!-- 审核状态为0,代表未审 -->
+	<if test="approvalStatus==0">
+	AND n.approval_status=0
+	</if>
+	<!-- 审核状态为1,代表已审 -->
+	<if test="approvalStatus==1">
+	AND (n.approval_status=1 OR n.approval_status=2)
+	</if>
+	<!-- 审核状态为3,代表显示今日未审核 -->
+	<if test="approvalStatus==3">
+	AND n.approval_status=0
+	AND create_time >= date_sub(CURDATE(),interval 0 day)
+	</if>
+	ORDER BY n.approval_time DESC,n.create_time DESC
+</select>
+
+<select id="getNotifyByFormNo" resultType="java.util.Map" parameterType="java.lang.Integer">
+SELECT
+	n.form_type AS formType,
+	n.approval_status AS apprStatus,
+	d.dicCode as maritalStatus,
+	n.propose_phone AS phone,
+	n.proposer_name AS proposerName,
+	n.form_type AS formType
+FROM
+	notify n
+LEFT JOIN (
+	SELECT dd.id AS dId, dd.dic_code AS dicCode FROM data_dictionary dd
+) d ON d.dId=n.propose_marital_status
+WHERE
+	n.form_no =  #{formNo,jdbcType=INTEGER}
+</select>
+
+<update id="updateByFormNo" parameterType="java.util.Map">
+UPDATE notify n
+	<set>
+	<if test="approvalStatus!=null">
+		n.approval_status = #{approvalStatus,jdbcType=INTEGER},
+	</if>
+	<if test="approvalPerson!=null">
+		n.approval_person = #{approvalPerson,jdbcType=VARCHAR},
+	</if>
+	<if test="approvalResul!=null">
+		n.approval_result = #{approvalResul,jdbcType=VARCHAR},
+	</if>
+	<if test="approvalTime!=null">
+		n.approval_time = #{approvalTime,jdbcType=TIMESTAMP},
+	</if>
+	</set>
+	WHERE n.form_no= #{formNo,jdbcType=INTEGER}
+</update>
+
+<select id="getNotifyDetailCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+select count(*) from notify
+		<where>
+			<if test="approvalStatus != null">approval_status = #{approvalStatus,jdbcType=INTEGER}</if>
+			<if test="approvalStatus == null">approval_status IN (0, 1, 2)</if>
+			<if test="approvalBeginDate != null">and create_time >= #{approvalBeginDate,jdbcType=TIMESTAMP}</if>
+			<if test="approvalEndDate != null">and #{approvalEndDate,jdbcType=TIMESTAMP} >= create_time</if>
+			and form_type in (4,5);
+		</where>
+</select>
+
+<select id="selectDistinctTel" resultType="java.lang.Integer">
+		select count(distinct propose_phone) from notify where form_type in (4,5);
+	</select>
+
+</mapper>

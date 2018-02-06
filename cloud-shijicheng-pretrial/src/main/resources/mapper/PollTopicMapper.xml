@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="eastrobot.robotdev.ticketsystem.dao.PollTopicDao">
+
+	<resultMap id="BaseResultMap" type="eastrobot.robotdev.ticketsystem.model.PollTopic">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="survey_id" jdbcType="INTEGER" property="surveyId" />
+		<result column="title" jdbcType="VARCHAR" property="title" />
+		<result column="seq" jdbcType="INTEGER" property="seq" />
+		<result column="type" jdbcType="INTEGER" property="type" />
+		<result column="creator" jdbcType="VARCHAR" property="creator" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="modifier" jdbcType="VARCHAR" property="modifier" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+	</resultMap>
+
+	<!-- 新增问卷调查 -->
+	<insert id="addPollTopic" parameterType="eastrobot.robotdev.ticketsystem.model.PollTopic" useGeneratedKeys="true" keyProperty="id">
+		insert into poll_topic 
+			(survey_id,title,seq,type,creator,create_time) 
+		values 
+			(#{surveyId},#{title},#{seq},#{type},#{creator},#{createTime})
+	</insert>
+	
+	<!-- 通过surveyId查询当前问卷调查下所有的题目 -->
+	<select id="findTopicsBySurveyId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+		select * from poll_topic 
+		where survey_id = #{surveyId}
+	</select>
+	
+	<!-- 通过surveyId删除问卷调查题目 -->
+	<delete id="deleteTopicsBySurveyId">
+		delete from poll_topic 
+		where survey_id = #{surveyId}
+	</delete>
+	
+</mapper>

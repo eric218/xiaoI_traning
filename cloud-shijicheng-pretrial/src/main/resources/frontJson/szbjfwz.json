@@ -1,0 +1,146 @@
+	{    
+	"pageTitle": "生殖保健服务证", 
+	"navTitle": "世纪城社区",
+	"fnId":"10",
+    "navSubTitle": "&nbsp;&nbsp;便民服务平台", 
+    "mainTitle": "计生服务",
+    "mainSubTitle": "生殖保健服务证",
+    "mainInfo": "<p>办理对象：依法结婚后符合生育第一个子女及第二个子女的夫妇。</p> <p>承办部门：</p> <p>&nbsp;&nbsp;&nbsp;&nbsp;1、一孩证在所辖居委会办理</p> <p>&nbsp;&nbsp;&nbsp;&nbsp;2、二孩证在世纪城社区办证窗口办理</p> <p>办理地址：观山湖区世纪城服务中心一楼大厅办证窗口</p> <p>接待时间：周一到周五〔节假日除外〕</p> <p>业务完成时限：3个工作日</p>", 
+    "panelHeader": "在线初审：在线提交资料，若通过审核将短信通知您前往柜台办理", 
+    "formInitParams": 
+    [
+        {
+            "params": {
+                "divID": "realName", 
+                "label": "申请人姓名"
+            }, 
+            "type": "text"
+        },
+        {
+            "params": {
+                "divID": "telNum", 
+                "label": "联系电话"
+            }, 
+            "type": "text"
+        }, 
+        {
+            "params": {
+                "backendUrl": "upload.api",
+                "divID": "male_id_pic_front", 
+                "quality": "0.6", 
+                "hvw": "1", 
+                "label": "男方身份证(正面)", 
+                "picClassify": "male_id_pic_front"
+            }, 
+            "type": "img"
+        },
+        {
+            "params": {
+                "backendUrl": "upload.api",
+                "divID": "male_id_pic_back", 
+                "quality": "0.6", 
+                "hvw": "1", 
+                "label": "男方身份证(背面)", 
+                "picClassify": "male_id_pic_back"
+            }, 
+            "type": "img"
+        },
+        {
+            "params": {
+                "backendUrl": "upload.api",
+                "divID": "female_id_pic_front", 
+                "quality": "0.6", 
+                "hvw": "1", 
+                "label": "女方身份证(正面)", 
+                "picClassify": "female_id_pic_front"
+            }, 
+            "type": "img"
+        },
+        {
+            "params": {
+                "backendUrl": "upload.api",
+                "divID": "female_id_pic_back", 
+                "quality": "0.6", 
+                "hvw": "1", 
+                "label": "女方身份证(背面)", 
+                "picClassify": "female_id_pic_back"
+            }, 
+            "type": "img"
+        },
+        {
+            "params": {
+                "backendUrl": "upload.api",
+                "divID": "male_account_pic_1", 
+                "quality": "0.6", 
+                "hvw": "1", 
+                "label": "男方户口簿(第一页)", 
+                "picClassify": "male_account_pic_1"
+            }, 
+            "type": "img"
+        },
+        {
+            "params": {
+                "backendUrl": "upload.api",
+                "divID": "male_account_pic_2", 
+                "quality": "0.6", 
+                "hvw": "1", 
+                "label": "男方户口簿(第二页)", 
+                "picClassify": "male_account_pic_2"
+            }, 
+            "type": "img"
+        },
+        {
+            "params": {
+                "backendUrl": "upload.api",
+                "divID": "female_account_pic_1", 
+                "quality": "0.6", 
+                "hvw": "1", 
+                "label": "女方户口簿(第一页)", 
+                "picClassify": "female_account_pic_1"
+            }, 
+            "type": "img"
+        },
+        {
+            "params": {
+                "backendUrl": "upload.api",
+                "divID": "female_account_pic_2", 
+                "quality": "0.6", 
+                "hvw": "1", 
+                "label": "女方户口簿(第二页)", 
+                "picClassify": "female_account_pic_2"
+            }, 
+            "type": "img"
+        },
+        {
+            "params": {
+                "backendUrl": "upload.api",
+                "divID": "marriage_certificate_pic", 
+                "quality": "0.6", 
+                "hvw": "1", 
+                "label": "结婚证", 
+                "picClassify": "marriage_certificate_pic"
+            }, 
+            "type": "img"
+        },
+        {
+            "params": {
+                "backendUrl": "upload.api",
+                "divID": "photo_together", 
+                "quality": "0.6", 
+                "hvw": "1", 
+                "label": "夫妻合影照片(1寸)", 
+                "picClassify": "photo_together"
+            }, 
+            "type": "img"
+        },
+        {
+            "params": {
+                "downloadUrl": "download.api",
+                "divID": "download", 
+                "label": "下载生殖保健服务证申请表",
+                "filename": "智能问答返回报文.docx"
+            }, 
+            "type": "download"
+        }
+    ]
+}

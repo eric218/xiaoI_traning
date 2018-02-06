@@ -1,0 +1,6 @@
+target/
+.classpath
+.mymetadata
+.project
+.tern-project
+/.settings/
